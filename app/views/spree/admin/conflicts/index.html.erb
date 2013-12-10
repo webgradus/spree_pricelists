@@ -1,0 +1,28 @@
+<% content_for :page_title do %>
+  <%= "Конфликты Распознавания" %>
+<% end %>
+<%= render "spree/admin/pricelists/sub_menu" %>
+<table class="index" id="listing_products">
+  <colgroup>
+    <col style="width:70%"></col>
+    <col style="width:20%"></col>
+    <col style="width:10%"></col>
+  </colgroup>
+  <thead>
+    <tr data-hook="admin_products_index_headers">
+      <th>Конфликты</th>
+      <th>Решение</th>
+      <th class="actions" data-hook="admin_products_index_header_actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: 'spree/admin/conflicts/conflict', collection: @conflicts %>
+  </tbody>
+</table>
+<% if Spree::Conflict.count(:id) > 5 %>
+  <div class="get-more">
+    <a data-remote="true" href="/admin/conflicts?page=2" rel="next">
+      Показать еще конфликты
+    </a>
+  </div>
+<% end %>

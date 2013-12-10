@@ -1,0 +1,30 @@
+<tr id="<%= dom_id(conflict) %>">
+  <%= form_tag admin_conflict_path(conflict.id), method: :put do %>
+    <td class="align-center" style="border-left: 1px solid #cee1f4;">
+      <span>
+        <%= conflict.product_name %>
+      </span>
+      <p>
+        <icon class="icon-resize-vertical"></icon>
+      </p>
+      <fieldset class="no-border-bottom no-border-top">
+        <span>
+          <%= select_tag 'conflict[product]', options_for_select(conflict.select_options_for_suitable_products), class: 'select2 ' %>
+        </span>
+      </fieldset>
+    </td>
+    <td class="align-center">
+      <fieldset class="no-border-bottom no-border-top">
+        <div class="field">
+          <%= label_tag "Действие" %>
+          <span>
+            <%= select_tag 'conflict[action]', options_for_select(conflict_solve_actions), class: 'select2 fullwidth' %>
+          </span>
+        </div>
+      </fieldset>
+    </td>
+  <% end %>
+  <td class="actions" data-hook="admin_products_index_row_actions">
+    <%= link_to_with_icon 'icon-ok', 'Решить конфликт', "#nil", {class: "edit", no_text: true, onclick: "$('##{dom_id conflict} form').submit();" } %>
+  </td>
+</tr>

@@ -1,0 +1,39 @@
+<div class="row">
+  <div class="four columns lh">
+    <%= f.field_container :name do %>
+      <%= f.label :name, Spree::Pricelist.human_attribute_name(:name) %>
+      <span class="required">*</span>
+      <br/>
+      <%= f.text_field :name, :class => 'fullwidth title' %>
+      <%= f.error_message_on :name %>
+    <% end %>
+  </div>
+  <div class="four columns lh">
+    <%= f.field_container :sku_column do %>
+      <%= f.label :parser_sku_column, Spree::Pricelist.human_attribute_name(:sku_column) %>
+      <br/>
+      <%= f.text_field :sku_column, :class => 'fullwidth' %>
+    <% end %>
+  </div>
+  <div class="four columns lh">
+    <%= f.field_container :name_column do %>
+      <%= f.label :parser_name_column, Spree::Pricelist.human_attribute_name(:name_column) %>
+      <br/>
+      <%= f.text_field :name_column, :class => 'fullwidth' %>
+    <% end %>
+  </div>
+  <div class="four columns lh">
+    <%= f.field_container :cost_price_column do %>
+      <%= f.label :parser_cost_price_column, Spree::Pricelist.human_attribute_name(:cost_price_column) %>
+      <br/>
+      <%= f.text_field :cost_price_column, :class => 'fullwidth' %>
+    <% end %>
+  </div>
+  <div class="four columns lh">
+    <%= f.field_container :price_column do %>
+      <%= f.label :parser_price_column, Spree::Pricelist.human_attribute_name(:price_column) %>
+      <br/>
+      <%= f.text_field :price_column, :class => 'fullwidth' %>
+    <% end %>
+  </div>
+</div>

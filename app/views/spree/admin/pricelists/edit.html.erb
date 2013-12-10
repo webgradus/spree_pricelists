@@ -1,0 +1,17 @@
+<% content_for :page_title do %>
+  <%= "Изменить Распознаватель" %>
+<% end %>
+<%= render "sub_menu" %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @pricelist } %>
+<%= form_for [:admin, @pricelist], :html => { :multipart => true } do |f| %>
+  <fieldset>
+    <%= render 'form', f: f %>
+    <div class="form-buttons filter-actions actions" data-hook="buttons">
+      <%= button Spree.t('actions.update'), 'icon-ok' %>
+      <span class="or">
+        <%= Spree.t(:or) %>
+      </span>
+      <%= link_to_with_icon 'icon-remove', Spree.t('actions.cancel'), admin_pricelists_path, :class => 'button' %>
+    </div>
+  </fieldset>
+<% end %>

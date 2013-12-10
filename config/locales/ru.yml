@@ -1,0 +1,22 @@
+ru:
+  activerecord:
+    models:
+      spree/pricelist:
+        one: Распознаватель
+    attributes:
+        spree/pricelist:
+            name: Название
+            sku_column: Столбец с артикулом товара
+            name_column: Столбец с наименованием товара
+            cost_price_column: Столбец с себестоимостью товара
+            price_column: Столбец с ценой товара
+  spree:
+    starting_row: Строка, с которой начинается парсинг
+    update_product: Обновить существующий товар
+    create_new_product: Создать новый товар
+    admin:
+      tab:
+        pricelists: Распознаватели
+        conflicts: Конфликты загрузки
+        new_import: Загрузка прайсов
+        update_catalog: Обновить каталог

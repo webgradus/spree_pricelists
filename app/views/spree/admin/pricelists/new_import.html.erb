@@ -1,0 +1,33 @@
+<% content_for :page_title do %>
+  <%= "Загрузка и распознавание XLSX файлов" %>
+<% end %>
+
+<%= render "sub_menu" %>
+
+<%= form_tag import_admin_pricelists_path, multipart: true do %>
+  <fieldset class="no-border-top">
+    <div class="row">
+      <div class="four columns">
+        <div class="field" data-hook="file">
+          <%= label_tag Spree.t(:filename) %>
+          <br>
+          <%= file_field_tag :xlsx_file %>
+        </div>
+        <div class="field">
+          <%= label_tag :pricelist, Spree::Pricelist.model_name.human %>
+          <span>
+            <%= select_tag :pricelist, options_for_select(Spree::Pricelist.all.map{|c| [c.name, c.id]}), :include_blank => true, :class => 'select2 fullwidth' %>
+          </span>
+        </div>
+        <div class="field">
+          <%= label_tag Spree.t(:starting_row) %>
+          <br>
+          <%= number_field_tag :starting_row, 1 %>
+        </div>
+      </div>
+    </div>
+    <div class="form-buttons filter-actions actions" data-hook="buttons">
+      <%= button "Загрузить", 'icon-download' %>
+    </div>
+  </fieldset>
+<% end %>

@@ -1,0 +1,4 @@
+$("#new_parser_wrapper").html('<%= escape_javascript(render :template => "spree/admin/pricelists/new", formats: [:html], handlers: [:erb]) %>');
+handle_date_picker_fields();
+$("#table-filter").hide();
+$("#admin_new_pricelist").parent().hide();
