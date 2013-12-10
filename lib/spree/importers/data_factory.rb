@@ -12,6 +12,9 @@ class Spree::Importers::DataFactory
     if attrs['name'][-1] == "\""
       attrs['name'][-1]=''
     end
+    unless attrs['sku'].present?
+      attrs['sku'] = "%06d" % rand(999999)
+    end
     #replacer[0].each_with_index do |symb,index|
       #attrs['name'].gsub!(symb,replacer[1][index].to_s)
     #end

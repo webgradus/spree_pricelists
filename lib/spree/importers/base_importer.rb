@@ -41,7 +41,7 @@ class Spree::Importers::BaseImporter
   def parse_csv_row(row)
     return unless valid?(row)
     # we consider index starting from 1
-    sku = pricelist.sku_column.present? ? row[pricelist.sku_column.to_i - 1] : ("%06d" % rand(999999))
+    sku = pricelist.sku_column.present? ? row[pricelist.sku_column.to_i - 1] : nil
     price = prepare_price(row[pricelist.cost_price_column.to_i - 1])
     attrs = { sku: sku,
               name: row[pricelist.name_column.to_i - 1],
