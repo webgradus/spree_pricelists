@@ -19,6 +19,8 @@ bundle
 bundle exec rake spree_pricelists:install:migrations
 ```
 
+Copy 'lib/xlsx2csv.py' to your Rails 'lib' folder.
+
 Testing
 -------
 
