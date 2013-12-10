@@ -31,7 +31,7 @@ class Spree::Importers::BaseImporter
     clear_tmp_files
   end
 
-  private
+  protected
 
   def clear_tmp_files
     Dir["tmp/*.xlsx"].each{ |f| File.delete(f)}
@@ -39,6 +39,7 @@ class Spree::Importers::BaseImporter
   end
 
   def parse_csv_row(row)
+    return unless valid?(row)
     # we consider index starting from 1
     sku = pricelist.sku_column.present? ? row[pricelist.sku_column.to_i - 1] : ("%06d" % rand(999999))
     price = prepare_price(row[pricelist.cost_price_column.to_i - 1])
@@ -57,6 +58,11 @@ class Spree::Importers::BaseImporter
       end
       @up = true
     end
+  end
+
+  def valid?(row)
+    # OVERRIDE THIS IN SUBCLASSES
+    true
   end
 
   def prepare_price(price_value)
