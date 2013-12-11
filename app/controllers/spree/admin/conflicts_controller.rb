@@ -2,14 +2,7 @@ module Spree
   module Admin
     class ConflictsController < BaseController
       def index
-        respond_to do |format|
-          @conflicts = Spree::Conflict.page(params[:page]).per(5)
-          unless request.xhr?
-            format.html
-          else
-            format.js{ render 'index',:layout=>nil}
-          end
-        end
+        @conflicts = Spree::Conflict.page(params[:page]).per(5)
       end
 
       def update
