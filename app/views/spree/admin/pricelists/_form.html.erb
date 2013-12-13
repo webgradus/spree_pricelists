@@ -36,4 +36,11 @@
       <%= f.text_field :price_column, :class => 'fullwidth' %>
     <% end %>
   </div>
+  <div class="four columns lh">
+    <%= f.field_container :margin do %>
+      <%= f.label :margin, Spree::Pricelist.human_attribute_name(:margin) %>
+      <br/>
+      <%= f.text_field :margin, :class => 'fullwidth' %>
+    <% end %>
+  </div>
 </div>

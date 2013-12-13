@@ -39,35 +39,34 @@ class Spree::Importers::BaseImporter
   end
 
   def parse_csv_row(row)
-    return unless valid?(row)
     # we consider index starting from 1
     sku = pricelist.sku_column.present? ? row[pricelist.sku_column.to_i - 1] : nil
     price = prepare_price(row[pricelist.cost_price_column.to_i - 1])
     attrs = { sku: sku,
               name: row[pricelist.name_column.to_i - 1],
               price: price,
-              cost_price: row[pricelist.cost_price_column.to_i - 1],
+              cost_price: row[pricelist.cost_price_column.to_i - 1].to_f,
               #available_on: ::Time.now
     }
     if row_is_taxon?(row)
       create_taxon(row)
       @up = false
     else
-      if check_on_write(attrs)
+      if valid?(attrs)
         Spree::DataFactoryWorker.perform_async(taxonomy.id, taxon.id, attrs)
       end
       @up = true
     end
   end
 
-  def valid?(row)
-    # OVERRIDE THIS IN SUBCLASSES
-    true
+  def valid?(attrs)
+    # OVERRIDE THIS IN SUBCLASSES IF NECESSARY
+    attrs[:name].present? && attrs[:price].present?
   end
 
   def prepare_price(price_value)
-    # OVERRIDE THIS IN SUBCLASSES
-    price_value
+    # OVERRIDE THIS IN SUBCLASSES IF NECESSARY
+    price_value.to_f * (pricelist.margin || 1)
   end
 
   def row_is_taxon?(row)
@@ -101,10 +100,6 @@ class Spree::Importers::BaseImporter
       tax.save
     end
     return tax
-  end
-
-  def check_on_write(attrs={})
-    attrs[:sku].present? && attrs[:name].present? && attrs[:price].present?
   end
 
   def self.delayed_start(parser_id, file_path,begin_point)

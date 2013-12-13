@@ -18,15 +18,13 @@ class Spree::Importers::DataFactory
     #replacer[0].each_with_index do |symb,index|
       #attrs['name'].gsub!(symb,replacer[1][index].to_s)
     #end
-    attrs['price']=attrs['price'].to_f
-    attrs['cost_price']=attrs['cost_price'].to_f
     product = Spree::Product.find_by_synonim(attrs['name'])
     if product.present?
-      LOGGER.info("Товар #{attrs['name']} найден в таблице! Обновляем атрибуты: Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s} | Артикул: #{attrs['sku'].to_s}")
+      LOGGER.info("Товар #{attrs['name']} найден в таблице! Обновляем атрибуты: Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s}")
       #provider = product.first.provider_prices.where(" provider = '#{taxonomy.name}' ").first_or_create(:provider=>taxonomy.name)
       #provider.price = attrs['price'].to_f
       #provider.save
-      product.first.update_attributes(attrs)
+      product.first.update_attributes(attrs.except('sku'))
       product.first.taxons << taxon unless product.first.taxons.exists?(taxon)
     else
       conflict = Spree::Conflict.find_by_product_name(attrs['name'])
