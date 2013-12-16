@@ -1,6 +1,7 @@
+require 'sidekiq'
 module Spree
   class DataFactoryWorker
-    include Sidekiq::Worker
+    include ::Sidekiq::Worker
     sidekiq_options :queue => :import, :backtrace => true
 
     def perform(taxonomy,taxon,attrs)
