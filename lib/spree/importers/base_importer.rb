@@ -12,11 +12,7 @@ class Spree::Importers::BaseImporter
     @log = Logger.new(STDOUT)
     @pricelist = pricelist
     @starting_row = begin_point
-    #@counter = @created = @updated = @issues = 0
     @file_path = file_path
-    #@time_spend = Time.now
-    #@rows_count = CSV.read(@file, quote_char: "\n").count
-    #@up = false
     @taxonomy = Spree::Taxonomy.where(:name => @pricelist.name).first_or_create!
     @taxon = @taxonomy.root
   end
@@ -46,6 +42,7 @@ class Spree::Importers::BaseImporter
               name: row[pricelist.name_column.to_i - 1],
               price: price,
               cost_price: row[pricelist.cost_price_column.to_i - 1].to_f,
+              quantity: row[pricelist.quantity_column.to_i - 1].to_i
               #available_on: ::Time.now
     }
     if row_is_taxon?(row)
@@ -113,9 +110,6 @@ class Spree::Importers::BaseImporter
       f.write  file.read
     end
     unless system("python lib/xlsx2csv.py -i -d '\;' #{tmp_file} #{csv_tmp_file}")
-      #Spree::Parser::FAYE_MESSAGE.update_attributes body: "Не правильный формат файла XLSX!!!", message_type: "error"
-      #Spree::Parser::FAYE_MESSAGE.reload
-      #sync_update Spree::Parser::FAYE_MESSAGE
       raise "Invalid XLSX format ERROR!"
     end
     csv_tmp_file

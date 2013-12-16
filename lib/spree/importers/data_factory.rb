@@ -24,13 +24,13 @@ class Spree::Importers::DataFactory
 
     def prepare_attrs
         if attrs['name'][0] == "\""
-            attrs['name'][0]=''
+            @attrs['name'][0]=''
         end
         if attrs['name'][-1] == "\""
-            attrs['name'][-1]=''
+            @attrs['name'][-1]=''
         end
         unless attrs['sku'].present?
-            attrs['sku'] = "%06d" % rand(999999)
+            @attrs['sku'] = "%06d" % rand(999999)
         end
     end
 
@@ -38,12 +38,23 @@ class Spree::Importers::DataFactory
         log.info("Товар #{attrs['name']} найден в таблице! Обновляем атрибуты: Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s}")
         product.update_attributes(attrs.except('sku'))
         product.taxons << taxon unless product.taxons.exists?(taxon)
+        update_quantity(product)
     end
 
     def create_product
         log.info("Создан новый товар! Наименование: #{attrs['name']} | Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s} | Артикул: #{attrs['sku'].to_s}")
         product = Spree::Product.create!(attrs.merge(shipping_category_id: Spree::ShippingCategory.first.id))
         product.taxons << taxon
+        update_quantity(product)
+    end
+
+    def update_quantity(product)
+        stock_location = Spree::StockLocation.active.first
+        if stock_location && attrs['quantity'] > 0
+            stock_movement = stock_location.stock_movements.build(quantity: attrs['quantity'])
+            stock_movement.stock_item = stock_location.set_up_stock_item(product.master)
+            stock_movement.save!
+        end
     end
 
     def handle_missing_product
