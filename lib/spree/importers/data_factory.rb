@@ -36,14 +36,14 @@ class Spree::Importers::DataFactory
 
     def update_product(product)
         log.info("Товар #{attrs['name']} найден в таблице! Обновляем атрибуты: Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s}")
-        product.update_attributes(attrs.except('sku'))
+        product.update_attributes(attrs.except('sku', 'quantity'))
         product.taxons << taxon unless product.taxons.exists?(taxon)
         update_quantity(product)
     end
 
     def create_product
         log.info("Создан новый товар! Наименование: #{attrs['name']} | Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s} | Артикул: #{attrs['sku'].to_s}")
-        product = Spree::Product.create!(attrs.merge(shipping_category_id: Spree::ShippingCategory.first.id))
+        product = Spree::Product.create!(attrs.merge(shipping_category_id: Spree::ShippingCategory.first.id).except('quantity'))
         product.taxons << taxon
         update_quantity(product)
     end
