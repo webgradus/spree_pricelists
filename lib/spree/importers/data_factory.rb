@@ -10,61 +10,61 @@ class Spree::Importers::DataFactory
         prepare_attrs
     end
 
-  def solve
-    raise ArgumentError.new("Option :name is required") unless attrs['name']
-    products = Spree::Product.find_by_synonim(attrs['name'])
-    if products.present?
-        update_product(products.first)
-    else
-        handle_missing_product
+    def solve
+        raise ArgumentError.new("Option :name is required") unless attrs['name']
+        products = Spree::Product.find_by_synonim(attrs['name'])
+        if products.present?
+            update_product(products.first)
+        else
+            handle_missing_product
+        end
     end
-  end
 
-  protected
+    protected
 
-  def prepare_attrs
-      if attrs['name'][0] == "\""
-          attrs['name'][0]=''
-      end
-      if attrs['name'][-1] == "\""
-          attrs['name'][-1]=''
-      end
-      unless attrs['sku'].present?
-          attrs['sku'] = "%06d" % rand(999999)
-      end
-  end
+    def prepare_attrs
+        if attrs['name'][0] == "\""
+            attrs['name'][0]=''
+        end
+        if attrs['name'][-1] == "\""
+            attrs['name'][-1]=''
+        end
+        unless attrs['sku'].present?
+            attrs['sku'] = "%06d" % rand(999999)
+        end
+    end
 
-  def update_product(product)
-      log.info("Товар #{attrs['name']} найден в таблице! Обновляем атрибуты: Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s}")
-      product.update_attributes(attrs.except('sku'))
-      product.taxons << taxon unless product.taxons.exists?(taxon)
-  end
+    def update_product(product)
+        log.info("Товар #{attrs['name']} найден в таблице! Обновляем атрибуты: Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s}")
+        product.update_attributes(attrs.except('sku'))
+        product.taxons << taxon unless product.taxons.exists?(taxon)
+    end
 
-  def create_product
-      log.info("Создан новый товар! Наименование: #{attrs['name']} | Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s} | Артикул: #{attrs['sku'].to_s}")
-      product = Spree::Product.create!(attrs.merge(shipping_category_id: Spree::ShippingCategory.first.id))
-      product.taxons << taxon
-  end
+    def create_product
+        log.info("Создан новый товар! Наименование: #{attrs['name']} | Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s} | Артикул: #{attrs['sku'].to_s}")
+        product = Spree::Product.create!(attrs.merge(shipping_category_id: Spree::ShippingCategory.first.id))
+        product.taxons << taxon
+    end
 
-  def handle_missing_product
-      conflict = Spree::Conflict.find_by_product_name(attrs['name'])
-      similar_data_present = unless conflict
-                               sim_prods = Spree::ProductSynonim.name_matching(attrs['name']).limit(1)
-                               sim_prods.present? && sim_prods[0].pg_search_rank > Spree::Importers::MIN_PG_SEARCH_RANK ? true : false
-                             end
-      if similar_data_present || conflict.present?
-          handle_conflict(conflict)
-      else
-          create_product
-      end
-  end
+    def handle_missing_product
+        conflict = Spree::Conflict.find_by_product_name(attrs['name'])
+        similar_data_present = unless conflict
+                                   sim_prods = Spree::ProductSynonim.name_matching(attrs['name']).limit(1)
+                                   sim_prods.present? && sim_prods[0].pg_search_rank > Spree::Importers::MIN_PG_SEARCH_RANK ? true : false
+                               end
+        if similar_data_present || conflict.present?
+            handle_conflict(conflict)
+        else
+            create_product
+        end
+    end
 
-  def handle_conflict(conflict)
-      log.warn("Товар с похожим наименованием существует!(#{attrs['name']})")
-      if conflict
-          conflict.update_attributes(sku: attrs['sku'], cost_price: attrs['cost_price'], price: attrs['price'])
-      else
-          Spree::Conflict.create(product_name: attrs['name'], cost_price: attrs['cost_price'], price: attrs['price'], sku: attrs['sku'], provider_name: taxonomy.name)
-      end
-  end
+    def handle_conflict(conflict)
+        log.warn("Товар с похожим наименованием существует!(#{attrs['name']})")
+        if conflict
+            conflict.update_attributes(sku: attrs['sku'], cost_price: attrs['cost_price'], price: attrs['price'])
+        else
+            Spree::Conflict.create(product_name: attrs['name'], cost_price: attrs['cost_price'], price: attrs['price'], sku: attrs['sku'], provider_name: taxonomy.name)
+        end
+    end
 end
