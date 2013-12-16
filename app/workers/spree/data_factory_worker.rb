@@ -4,7 +4,7 @@ module Spree
     sidekiq_options :queue => :import, :backtrace => true
 
     def perform(taxonomy,taxon,attrs)
-      Spree::Importers::DataFactory.solve(taxonomy,taxon,attrs)
+      Spree::Importers::DataFactory.new(taxonomy,taxon,attrs).solve
     end
 
   end
