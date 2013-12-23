@@ -4,6 +4,7 @@ Spree::Product.class_eval do
 
   has_many :product_synonims, class_name: 'Spree::ProductSynonim', dependent: :destroy
 
+  before_update :update_synonim, if: lambda {|product| product.name_changed? }
   after_create :add_synonim
 
   scope :find_by_synonim, lambda { |name| includes(:product_synonims).where("spree_product_synonims.name = ?", name).limit(1)}
@@ -18,5 +19,11 @@ Spree::Product.class_eval do
 
   def add_synonim(product_name=nil)
     self.product_synonims.find_or_create_by_name(product_name || self.name)
+  end
+
+  protected
+
+  def update_synonim
+    self.product_synonims.where(name: self.name_was).first.update_attributes(name: self.name)
   end
 end
