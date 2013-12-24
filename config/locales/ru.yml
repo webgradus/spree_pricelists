@@ -3,6 +3,11 @@ ru:
     models:
       spree/pricelist:
         one: Распознаватель
+      spree/conflict:
+        one: Конфликт
+        few: Конфликта
+        many: Конфликтов
+        other: Конфликты
     attributes:
         spree/pricelist:
             name: Название

@@ -7,7 +7,7 @@ class Spree::Conflict < ActiveRecord::Base
 
   def select_options_for_suitable_products
     options = {}
-    suitable_products.each{|p| options[p.attributes["name"]] = p.attributes["id"]}
+    suitable_products.each{|p| options[p.attributes["name"]] = p.attributes["product_id"]}
     options
   end
 

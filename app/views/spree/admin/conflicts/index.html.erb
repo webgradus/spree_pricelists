@@ -2,6 +2,9 @@
   <%= "Конфликты Распознавания" %>
 <% end %>
 <%= render "spree/admin/pricelists/sub_menu" %>
+<div id="conflicts-counter">
+  <%= "#{Spree::Conflict.count(:id)} #{Spree::Conflict.model_name.human(count: Spree::Conflict.count(:id))}" %>
+</div>
 <table class="index" id="listing_products">
   <colgroup>
     <col style="width:70%"></col>

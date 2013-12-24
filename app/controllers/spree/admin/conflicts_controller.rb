@@ -8,7 +8,6 @@ module Spree
       def update
         @conflict = Spree::Conflict.find params[:id]
         @conflict.solve(params[:conflict])
-        redirect_to admin_conflicts_path
       end
     end
   end
