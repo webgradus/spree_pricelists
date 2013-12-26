@@ -20,7 +20,7 @@ class Spree::Importers::BaseImporter
   def import
     log.info("#"*25 << "Start #{Time.now.to_s}" << "#"*25)
     current_row = 1
-    CSV.foreach(file_path, col_sep: ';', quote_char: "\n") do |row|
+    CSV.foreach(file_path, col_sep: ';') do |row|
       parse_csv_row(row) if current_row >= starting_row.to_i
       current_row += 1
     end
