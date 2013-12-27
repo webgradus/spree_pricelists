@@ -42,7 +42,7 @@ class Spree::Importers::BaseImporter
               name: row[pricelist.name_column.to_i - 1],
               price: price,
               cost_price: row[pricelist.cost_price_column.to_i - 1].to_f,
-              quantity: row[pricelist.quantity_column.to_i - 1].to_i
+              quantity: pricelist.quantity_column.present? ? row[pricelist.quantity_column.to_i - 1].to_i : nil
               #available_on: ::Time.now
     }
     if row_is_taxon?(row)
