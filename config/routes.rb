@@ -7,6 +7,6 @@ Spree::Core::Engine.routes.draw do
           post "import"
         end
       end
-      resources :conflicts, only: [:index, :update]
+      resources :conflicts, only: [:index, :update, :destroy]
     end
 end

@@ -8,7 +8,7 @@
     </p>
     <fieldset class="no-border-bottom no-border-top">
       <span>
-        <%= select_tag 'conflict[product]', options_for_select(conflict.select_options_for_suitable_products), class: 'select2 ' %>
+        <%= select_tag 'conflict[product]', options_for_select(conflict.select_options_for_suitable_products), class: 'select2 ', style: 'width:100%;' %>
       </span>
     </fieldset>
   </td>
@@ -24,5 +24,6 @@
   </td>
   <td class="actions" data-hook="admin_products_index_row_actions">
     <%= link_to_with_icon 'icon-ok', 'Решить конфликт', '#', {class: "edit resolve-conflict", no_text: true, :"data-id" => conflict.id } %>
+    <%= link_to_delete conflict, url: admin_conflict_path(conflict), no_text: true %>
   </td>
 </tr>

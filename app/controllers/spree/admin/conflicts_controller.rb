@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class ConflictsController < BaseController
+    class ConflictsController < ResourceController
       def index
         @conflicts = Spree::Conflict.page(params[:page]).per(5)
       end
