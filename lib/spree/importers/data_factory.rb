@@ -1,12 +1,13 @@
 class Spree::Importers::DataFactory
 
-    attr_reader :log, :taxonomy, :taxon, :attrs
+    attr_reader :log, :taxonomy, :taxon, :attrs, :pricelist
 
-    def initialize(taxonomy_id, taxon_id, attrs={})
+    def initialize(pricelist_id, taxonomy_id, taxon_id, attrs={})
         @log = Logger.new(STDOUT)
         @taxonomy = Spree::Taxonomy.find(taxonomy_id)
         @taxon = Spree::Taxon.find(taxon_id)
         @attrs = attrs
+        @pricelist = Spree::Pricelist.find(pricelist_id)
         prepare_attrs
     end
 
@@ -38,31 +39,14 @@ class Spree::Importers::DataFactory
         log.info("Товар #{attrs['name']} найден в таблице! Обновляем атрибуты: Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s}")
         product.update_attributes(attrs.except('sku', 'quantity', 'name'))
         product.taxons << taxon unless product.taxons.exists?(taxon)
-        update_quantity(product)
+        product.update_stock_from_pricelist(attrs)
     end
 
     def create_product
         log.info("Создан новый товар! Наименование: #{attrs['name']} | Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s} | Артикул: #{attrs['sku'].to_s}")
         product = Spree::Product.create!(attrs.merge(shipping_category_id: Spree::ShippingCategory.first.id).except('quantity'))
         product.taxons << taxon
-        update_quantity(product)
-    end
-
-    def update_quantity(product)
-        stock_location = Spree::StockLocation.active.first
-        if stock_location
-          # if pricelist has quantity column, we update quantity
-          # stock location should be backorderable: false by default
-          # otherwise: we set products as backorderable
-          if attrs['quantity'].present?
-            stock_movement = stock_location.stock_movements.build(quantity: attrs['quantity'])
-            stock_movement.stock_item = stock_location.set_up_stock_item(product.master)
-            stock_movement.save!
-          else
-            stock_item = stock_location.stock_item_or_create(product.master)
-            stock_item.update_attributes(backorderable: true)
-          end
-        end
+        product.update_stock_from_pricelist(attrs)
     end
 
     def handle_missing_product
@@ -81,9 +65,9 @@ class Spree::Importers::DataFactory
     def handle_conflict(conflict)
         log.warn("Товар с похожим наименованием существует!(#{attrs['name']})")
         if conflict
-            conflict.update_attributes(sku: attrs['sku'], cost_price: attrs['cost_price'], price: attrs['price'])
+            conflict.update_attributes(sku: attrs['sku'], cost_price: attrs['cost_price'], price: attrs['price'], pricelist_id: pricelist.id)
         else
-            Spree::Conflict.create(product_name: attrs['name'], cost_price: attrs['cost_price'], price: attrs['price'], sku: attrs['sku'], provider_name: taxonomy.name)
+            Spree::Conflict.create(product_name: attrs['name'], cost_price: attrs['cost_price'], price: attrs['price'], sku: attrs['sku'], provider_name: taxonomy.name, pricelist_id: pricelist.id)
         end
     end
 end

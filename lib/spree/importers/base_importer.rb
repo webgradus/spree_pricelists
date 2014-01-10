@@ -50,7 +50,7 @@ class Spree::Importers::BaseImporter
       @up = false
     else
       if valid?(attrs)
-        Spree::DataFactoryWorker.perform_async(taxonomy.id, taxon.id, attrs)
+        Spree::DataFactoryWorker.perform_async(pricelist.id, taxonomy.id, taxon.id, attrs)
       end
       @up = true
     end

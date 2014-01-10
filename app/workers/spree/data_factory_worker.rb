@@ -4,8 +4,8 @@ module Spree
     include ::Sidekiq::Worker
     sidekiq_options :queue => :import, :backtrace => true
 
-    def perform(taxonomy,taxon,attrs)
-      Spree::Importers::DataFactory.new(taxonomy,taxon,attrs).solve
+    def perform(pricelist_id, taxonomy_id,taxon_id,attrs)
+      Spree::Importers::DataFactory.new(pricelist_id, taxonomy_id,taxon_id,attrs).solve
     end
 
   end

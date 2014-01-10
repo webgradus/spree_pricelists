@@ -21,6 +21,23 @@ Spree::Product.class_eval do
     self.product_synonims.find_or_create_by_name(product_name || self.name)
   end
 
+  def update_stock_from_pricelist(attrs)
+    stock_location = Spree::StockLocation.active.first
+    if stock_location
+      # if pricelist has quantity column, we update quantity
+      # stock location should be backorderable: false by default
+      # otherwise: we set products as backorderable
+      if attrs['quantity'].present?
+        stock_movement = stock_location.stock_movements.build(quantity: attrs['quantity'])
+        stock_movement.stock_item = stock_location.set_up_stock_item(self.master)
+        stock_movement.save!
+      else
+        stock_item = stock_location.stock_item_or_create(self.master)
+        stock_item.update_attributes(backorderable: true)
+      end
+    end
+  end
+
   protected
 
   def update_synonim
