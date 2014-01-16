@@ -20,20 +20,11 @@ class Spree::Conflict < ActiveRecord::Base
       new_product_attrs = {}
       new_product_attrs[:price] = self.price.to_f if self.price.to_f > 0
       new_product_attrs[:cost_price] = self.cost_price.to_f if self.cost_price.to_f > 0
+      new_product_attrs[:pricelist_id] = self.pricelist_id
       product.update_attributes(new_product_attrs)
       product.update_stock_from_pricelist(new_product_attrs)
-      #if self.provider_name
-        #provider = product.provider_prices.where(" provider = '#{self.provider_name}' ").first_or_create(:provider=>self.provider_name)
-        #provider.price = self.cost_price.to_f
-        #provider.save
-      #end
     else
-      product = Spree::Product.create!(name: self.product_name, sku: self.sku, price: self.price.to_f, cost_price: self.cost_price.to_f, shipping_category_id: Spree::ShippingCategory.first.id)
-      #if self.provider_name
-        #provider = product.provider_prices.where(" provider = '#{self.provider_name}' ").first_or_create(:provider=>self.provider_name)
-        #provider.price = self.cost_price.to_f
-        #provider.save
-      #end
+      product = Spree::Product.create!(name: self.product_name, sku: self.sku, price: self.price.to_f, cost_price: self.cost_price.to_f, pricelist_id: self.pricelist_id, shipping_category_id: Spree::ShippingCategory.first.id)
     end
     self.destroy
   end

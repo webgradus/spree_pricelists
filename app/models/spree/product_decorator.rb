@@ -3,6 +3,7 @@ Spree::Product.class_eval do
   include PgSearch
 
   has_many :product_synonims, class_name: 'Spree::ProductSynonim', dependent: :destroy
+  belongs_to :pricelist
 
   before_update :update_synonim, if: lambda {|product| product.name_changed? }
   after_create :add_synonim
@@ -30,6 +31,7 @@ Spree::Product.class_eval do
       if attrs['quantity'].present?
         stock_movement = stock_location.stock_movements.build(quantity: attrs['quantity'])
         stock_movement.stock_item = stock_location.set_up_stock_item(self.master)
+        stock_movement.stock_item.update_attributes(backorderable: false)
         stock_movement.save!
       else
         stock_item = stock_location.stock_item_or_create(self.master)

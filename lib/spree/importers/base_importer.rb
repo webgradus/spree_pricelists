@@ -15,6 +15,7 @@ class Spree::Importers::BaseImporter
     @file_path = file_path
     @taxonomy = Spree::Taxonomy.where(:name => @pricelist.name).first_or_create!
     @taxon = @taxonomy.root
+    @parsed_products = []
   end
 
   def import
@@ -24,10 +25,16 @@ class Spree::Importers::BaseImporter
       parse_csv_row(row) if current_row >= starting_row.to_i
       current_row += 1
     end
+    update_missed_products
     clear_tmp_files
   end
 
   protected
+
+  def update_missed_products
+    # we need to delay it cause we need to make sure all DataFactory workers were done
+    Spree::UpdateMissedProductsWorker.perform_in(10.minutes, pricelist.id, @parsed_products)
+  end
 
   def clear_tmp_files
     Dir["tmp/*.xlsx"].each{ |f| File.delete(f)}
@@ -50,6 +57,8 @@ class Spree::Importers::BaseImporter
       @up = false
     else
       if valid?(attrs)
+        # we need this cause we want to check products that gone from price
+        @parsed_products << attrs[:name]
         Spree::DataFactoryWorker.perform_async(pricelist.id, taxonomy.id, taxon.id, attrs)
       end
       @up = true
