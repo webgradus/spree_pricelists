@@ -65,9 +65,9 @@ class Spree::Importers::DataFactory
     def handle_conflict(conflict)
         log.warn("Товар с похожим наименованием существует!(#{attrs['name']})")
         if conflict
-            conflict.update_attributes(sku: attrs['sku'], cost_price: attrs['cost_price'], price: attrs['price'], pricelist_id: pricelist.id)
+            conflict.update_attributes(sku: attrs['sku'], cost_price: attrs['cost_price'], price: attrs['price'], pricelist_id: pricelist.id, quantity: attrs['quantity'])
         else
-            Spree::Conflict.create(product_name: attrs['name'], cost_price: attrs['cost_price'], price: attrs['price'], sku: attrs['sku'], provider_name: taxonomy.name, pricelist_id: pricelist.id)
+            Spree::Conflict.create(product_name: attrs['name'], cost_price: attrs['cost_price'], price: attrs['price'], sku: attrs['sku'], provider_name: taxonomy.name, pricelist_id: pricelist.id, quantity: attrs['quantity'])
         end
     end
 end
