@@ -17,6 +17,8 @@ ru:
             price_column: Столбец с ценой товара
             quantity_column: Столбец с количеством товара
             margin: Наценка (напр., "1.15")
+        spree/product:
+          pricelist: Распознаватель
   spree:
     starting_row: Строка, с которой начинается парсинг
     update_product: Обновить существующий товар
