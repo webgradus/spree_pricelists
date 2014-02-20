@@ -45,6 +45,6 @@ Spree::Product.class_eval do
   protected
 
   def update_synonim
-    self.product_synonims.where(name: self.name_was).first.update_attributes(name: self.name)
+    self.product_synonims.where(name: self.name_was).first.try(:update_attributes, {name: self.name})
   end
 end
