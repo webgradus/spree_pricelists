@@ -1,0 +1,16 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:new_product_synonim) %>
+<% end %>
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product_synonim } %>
+<%= form_for [:admin, @product, @product_synonim], :html => { :multipart => true } do |f| %>
+  <fieldset>
+    <%= render 'form', f: f %>
+    <div class="form-buttons filter-actions actions" data-hook="buttons">
+      <%= button Spree.t('actions.create'), 'icon-ok' %>
+      <span class="or">
+        <%= Spree.t(:or) %>
+      </span>
+      <%= link_to_with_icon 'icon-remove', Spree.t('actions.cancel'), admin_product_product_synonims_path(@product), :class => 'button' %>
+    </div>
+  </fieldset>
+<% end %>

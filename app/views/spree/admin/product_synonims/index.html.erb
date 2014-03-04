@@ -1,0 +1,41 @@
+<% content_for :page_actions do %>
+  <li id="new_product_link">
+    <%= link_to_with_icon 'icon-plus', Spree.t(:new_product_synonim), new_admin_product_product_synonim_path(@product), { :remote => true, :class => "button", :id => 'admin_new_product_synonim' } %>
+  </li>
+<% end %>
+
+<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
+
+<%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Product Synonims'} %>
+
+<div id="new_product_synonim_wrapper"></div>
+<% if @product_synonims.blank? %>
+  <div class="no-objects-found">
+    <%= Spree.t(:not_found) %>
+  </div>
+<% else %>
+  <table class="index" id="listing_products">
+    <colgroup>
+      <col style="width:90%"></col>
+      <col style="width:10%"></col>
+    </colgroup>
+    <thead>
+      <tr data-hook="admin_product_synonims_index_headers">
+        <th><%= Spree::ProductSynonim.human_attribute_name(:name) %></th>
+        <th class="actions" data-hook="admin_product_synonims_index_header_actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @product_synonims.each do |product_synonim| %>
+        <tr id="<%= dom_id product_synonim%>">
+          <td class="align-center">
+            <%= product_synonim.name %>
+          </td>
+          <td class="actions" data-hook="admin_products_index_row_actions">
+            <%= link_to_delete product_synonim, url: admin_product_product_synonim_path(@product, product_synonim), no_text: true %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

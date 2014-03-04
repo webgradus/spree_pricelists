@@ -19,7 +19,11 @@ ru:
             margin: Наценка (напр., "1.15")
         spree/product:
           pricelist: Распознаватель
+        spree/product_synonim:
+          name: Название
   spree:
+    product_synonims: Синонимы товара
+    new_product_synonim: Новый синоним
     starting_row: Строка, с которой начинается парсинг
     update_product: Обновить существующий товар
     create_new_product: Создать новый товар

@@ -8,5 +8,8 @@ Spree::Core::Engine.routes.draw do
         end
       end
       resources :conflicts, only: [:index, :update, :destroy]
+      resources :products do
+        resources :product_synonims
+      end
     end
 end

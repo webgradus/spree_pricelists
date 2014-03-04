@@ -1,0 +1,11 @@
+<div class="row">
+  <div class="four columns lh">
+    <%= f.field_container :name do %>
+      <%= f.label :name, Spree::ProductSynonim.human_attribute_name(:name) %>
+      <span class="required">*</span>
+      <br/>
+      <%= f.text_field :name, :class => 'fullwidth title' %>
+      <%= f.error_message_on :name %>
+    <% end %>
+  </div>
+</div>
