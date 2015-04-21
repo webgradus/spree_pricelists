@@ -5,19 +5,16 @@ class Spree::Importers::BaseImporter
 
   def self.parse(pricelist_id, file, starting_row)
     tmp_file_path = create_tmp_csv_file(file)
-    # byebug
     delayed_start(pricelist_id, tmp_file_path, starting_row)
   end
 
   def initialize(pricelist, file_path, begin_point)
-    # byebug
     @log = Logger.new(STDOUT)
     @pricelist = pricelist
     @starting_row = begin_point
     @file_path = file_path
     @taxon = Spree::Taxon.find_or_create_by(:name => @pricelist.name)
     @taxonomy = @taxon.taxonomy
-    # @taxon = @taxonomy.root
     @parsed_products = []
     @taxon_root = Spree::Taxon.find_by_name(@pricelist.name)
     
@@ -43,7 +40,6 @@ class Spree::Importers::BaseImporter
 
   def update_missed_products
     # we need to delay it cause we need to make sure all DataFactory workers were done
-    # byebug
     Spree::UpdateMissedProductsWorker.perform_in(10.minutes, pricelist.id, @parsed_products)
   end
 
@@ -110,14 +106,11 @@ class Spree::Importers::BaseImporter
 
   def save_taxon(parent, row)
     log.info("Переназначаем родителя #{taxon.name}")
-    # byebug
-    # tax = Spree::Taxon.where(:name=>row.compact.first.to_s,:taxonomy_id => taxonomy.id,:parent_id=>parent.id).first
     tax = Spree::Taxon.where("name ILIKE ?", row.compact.first.to_s).map{|x| x if x.parent_id == parent.id or x.parent.parent_id == parent.id}.compact.first
     if tax.nil?
       tax = Spree::Taxon.new(:name=>row.compact.first.mb_chars.capitalize.to_s)
       tax.taxonomy = taxonomy
       tax.parent=parent
-      # byebug
       tax.save
     end
     return tax
@@ -133,10 +126,6 @@ class Spree::Importers::BaseImporter
     File.open(tmp_file, 'wb') do |f|
       f.write file.read
     end
-    # File.open(tmp_file, 'wb') do |f|
-    #   f.write  file.read
-    # end
-    # byebug
     unless system("python lib/xlsx2csv.py -i -d '\;' #{tmp_file} #{csv_tmp_file}")
       raise "Invalid XLSX format ERROR!"
     end
