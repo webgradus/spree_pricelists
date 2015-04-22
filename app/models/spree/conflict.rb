@@ -3,7 +3,7 @@ class Spree::Conflict < ActiveRecord::Base
   validates :product_name, uniqueness: true
 
   def suitable_products
-    Spree::ProductSynonim.name_matching(product_name).first(10)
+    Spree::ProductSynonim.name_matching(product_name).first(30)
   end
 
   def select_options_for_suitable_products
