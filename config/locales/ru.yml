@@ -3,6 +3,9 @@ ru:
     models:
       spree/pricelist:
         one: Распознаватель
+        few: Распознавателя
+        many: Распознавателей
+        other: Распознавателей
       spree/conflict:
         one: Конфликт
         few: Конфликта
