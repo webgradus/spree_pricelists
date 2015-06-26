@@ -16,7 +16,7 @@ class Spree::Importers::BaseImporter
     @taxon = Spree::Taxon.find_or_create_by(:name => @pricelist.name)
     @taxonomy = @taxon.taxonomy
     @parsed_products = []
-    @taxon_root = Spree::Taxon.find_by_name(@pricelist.name)
+    @taxon_root = Spree::Taxon.where(:name=>@pricelist.name).first
     
   end
 
@@ -51,14 +51,24 @@ class Spree::Importers::BaseImporter
   def parse_csv_row(row)
     # we consider index starting from 1
     sku = pricelist.sku_column.present? ? row[pricelist.sku_column.to_i - 1] : nil
+    desc = pricelist.desc_column.present? ? row[pricelist.desc_column.to_i - 1] : nil
     price = prepare_price(row[pricelist.cost_price_column.to_i - 1])
     attrs = { sku: sku,
+              description: desc,
               name: row[pricelist.name_column.to_i - 1],
               price: price,
               cost_price: row[pricelist.cost_price_column.to_i - 1].to_f,
-              quantity: pricelist.quantity_column.present? ? row[pricelist.quantity_column.to_i - 1].to_i : nil
-              #available_on: ::Time.now
+              quantity: pricelist.quantity_column.present? ? row[pricelist.quantity_column.to_i - 1].to_i : nil,
+              available_on: Time.now
     }
+
+    properties = {
+      prop1: row[pricelist.prop1.to_i - 1],
+      prop2: row[pricelist.prop2.to_i - 1],
+      prop3: row[pricelist.prop3.to_i - 1],
+      prop4: row[pricelist.prop4.to_i - 1]
+    }
+
     if row_is_taxon?(row)
       # byebug
       create_taxon(row)
@@ -67,7 +77,8 @@ class Spree::Importers::BaseImporter
       if valid?(attrs)
         # we need this cause we want to check products that gone from price
         @parsed_products << attrs[:name]
-        Spree::DataFactoryWorker.perform_async(pricelist.id, taxonomy.id, taxon.id, attrs)
+        # byebug
+        Spree::DataFactoryWorker.perform_async(pricelist.id, taxonomy.id, taxon.id, attrs, properties)
       end
       @up = true
     end
@@ -106,9 +117,12 @@ class Spree::Importers::BaseImporter
 
   def save_taxon(parent, row)
     log.info("Переназначаем родителя #{taxon.name}")
-    tax = Spree::Taxon.where("name ILIKE ?", row.compact.first.to_s).map{|x| x if x.parent_id == parent.id or (x.parent.parent_id == parent.id if x.parent)}.compact.first
+    
+    # tax = Spree::Taxon.where("name ILIKE ?", row.compact.first.to_s).map{|x| x if x.parent_id == parent.id or (x.parent.parent_id == parent.id if x.parent)}.compact.first
+    tax = Spree::Taxon.where(:name=>row.compact.first.to_s).map{|x| x if x.parent_id == parent.id or (x.parent.parent_id == parent.id if x.parent)}.compact.first
     if tax.nil?
       tax = Spree::Taxon.new(:name=>row.compact.first.mb_chars.capitalize.to_s)
+      
       tax.taxonomy = taxonomy
       tax.parent=parent
       tax.save

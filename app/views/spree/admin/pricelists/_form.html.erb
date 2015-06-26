@@ -1,46 +1,101 @@
 <div class="row">
-  <div class="four columns lh">
-    <%= f.field_container :name do %>
-      <%= f.label :name, Spree::Pricelist.human_attribute_name(:name) %>
-      <span class="required">*</span>
-      <br/>
-      <%= f.text_field :name, :class => 'fullwidth title' %>
-      <%= f.error_message_on :name %>
-    <% end %>
+  <div class="col-sm-6">
+    
+  
+    <div class="four columns lh">
+      <%= f.field_container :name do %>
+        <%= f.label :name, Spree::Pricelist.human_attribute_name(:name) %>
+        <span class="required">*</span>
+        <br/>
+        <%= f.text_field :name, :class => 'fullwidth title' %>
+        <%= f.error_message_on :name %>
+      <% end %>
+    </div>
+    <div class="four columns lh">
+      <%= f.field_container :sku_column do %>
+        <%= f.label :parser_sku_column, Spree::Pricelist.human_attribute_name(:sku_column) %>
+        <br/>
+        <%= f.text_field :sku_column, :class => 'fullwidth' %>
+      <% end %>
+    </div>
+    <div class="four columns lh">
+      <%= f.field_container :name_column do %>
+        <%= f.label :parser_name_column, Spree::Pricelist.human_attribute_name(:name_column) %>
+        <br/>
+        <%= f.text_field :name_column, :class => 'fullwidth' %>
+      <% end %>
+    </div>
+    <div class="four columns lh">
+      <%= f.field_container :cost_price_column do %>
+        <%= f.label :parser_cost_price_column, Spree::Pricelist.human_attribute_name(:cost_price_column) %>
+        <br/>
+        <%= f.text_field :cost_price_column, :class => 'fullwidth' %>
+      <% end %>
+    </div>
+    <div class="four columns lh">
+      <%= f.field_container :quantity_column do %>
+        <%= f.label :quantity_column, Spree::Pricelist.human_attribute_name(:quantity_column) %>
+        <br/>
+        <%= f.text_field :quantity_column, :class => 'fullwidth' %>
+      <% end %>
+    </div>
+
+    <div class="four columns lh">
+      <%= f.field_container :desc_column do %>
+        <%= f.label :desc_column, Spree::Pricelist.human_attribute_name(:desc_column) %>
+        <br/>
+        <%= f.text_field :desc_column, :class => 'fullwidth' %>
+      <% end %>
+    </div>
+
+    <div class="four columns lh">
+      <%= f.field_container :image_dir_column do %>
+        <%= f.label :image_dir_column, Spree::Pricelist.human_attribute_name(:image_dir_column) %>
+        <br/>
+        <%= f.text_field :image_dir_column, :placeholder=> "/lib/images",:class => 'fullwidth' %>
+      <% end %>
+    </div>
+
+    <div class="four columns lh">
+      <%= f.field_container :margin do %>
+        <%= f.label :margin, Spree::Pricelist.human_attribute_name(:margin) %>
+        <br/>
+        <%= f.text_field :margin, :class => 'fullwidth' %>
+      <% end %>
+    </div>
+
   </div>
+
+  <div class="col-sm-6">
+    <h3>Свойства товара</h3>
+    <div class="four columns lh">
+      <%= f.field_container :prop1 do %>
+        <%= f.label :prop1, 'Бренд' %>
+        <br/>
+        <%= f.text_field :prop1, :class => 'fullwidth' %>
+      <% end %>
+    </div>
+  
   <div class="four columns lh">
-    <%= f.field_container :sku_column do %>
-      <%= f.label :parser_sku_column, Spree::Pricelist.human_attribute_name(:sku_column) %>
-      <br/>
-      <%= f.text_field :sku_column, :class => 'fullwidth' %>
-    <% end %>
-  </div>
-  <div class="four columns lh">
-    <%= f.field_container :name_column do %>
-      <%= f.label :parser_name_column, Spree::Pricelist.human_attribute_name(:name_column) %>
-      <br/>
-      <%= f.text_field :name_column, :class => 'fullwidth' %>
-    <% end %>
-  </div>
-  <div class="four columns lh">
-    <%= f.field_container :cost_price_column do %>
-      <%= f.label :parser_cost_price_column, Spree::Pricelist.human_attribute_name(:cost_price_column) %>
-      <br/>
-      <%= f.text_field :cost_price_column, :class => 'fullwidth' %>
-    <% end %>
-  </div>
-  <div class="four columns lh">
-    <%= f.field_container :quantity_column do %>
-      <%= f.label :quantity_column, Spree::Pricelist.human_attribute_name(:quantity_column) %>
-      <br/>
-      <%= f.text_field :quantity_column, :class => 'fullwidth' %>
-    <% end %>
-  </div>
-  <div class="four columns lh">
-    <%= f.field_container :margin do %>
-      <%= f.label :margin, Spree::Pricelist.human_attribute_name(:margin) %>
-      <br/>
-      <%= f.text_field :margin, :class => 'fullwidth' %>
-    <% end %>
+      <%= f.field_container :prop2 do %>
+        <%= f.label :prop2, 'Тип кожи' %>
+        <br/>
+        <%= f.text_field :prop2, :class => 'fullwidth' %>
+      <% end %>
+    </div>
+    <div class="four columns lh">
+      <%= f.field_container :prop3 do %>
+        <%= f.label :prop3, 'Тип волос' %>
+        <br/>
+        <%= f.text_field :prop3, :class => 'fullwidth' %>
+      <% end %>
+    </div>
+    <div class="four columns lh">
+      <%= f.field_container :prop4 do %>
+        <%= f.label :prop4, 'Оттенок' %>
+        <br/>
+        <%= f.text_field :prop4, :class => 'fullwidth' %>
+      <% end %>
+    </div>
   </div>
 </div>

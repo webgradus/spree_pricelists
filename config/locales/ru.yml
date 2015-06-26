@@ -15,6 +15,8 @@ ru:
         spree/pricelist:
             name: Название
             sku_column: Столбец с артикулом товара
+            desc_column: Столбец с описанием товара
+            image_dir_column: Столбец с папкой изображений для товара
             name_column: Столбец с наименованием товара
             cost_price_column: Столбец с себестоимостью товара
             price_column: Столбец с ценой товара
