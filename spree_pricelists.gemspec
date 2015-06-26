@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.description = 'Extension for loading and updating products from XLS pricelists'
   s.required_ruby_version = '>= 1.9.3'
 
-  # s.author    = 'You'
+  s.author    = 'You'
   # s.email     = 'you@example.com'
   # s.homepage  = 'http://www.spreecommerce.com'
 
