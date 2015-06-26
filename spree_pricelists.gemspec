@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.9.3'
 
   s.author    = 'You'
+  
   # s.email     = 'you@example.com'
   # s.homepage  = 'http://www.spreecommerce.com'
 
