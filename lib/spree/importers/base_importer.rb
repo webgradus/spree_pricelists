@@ -63,10 +63,26 @@ class Spree::Importers::BaseImporter
     }
 
     properties = {
-      prop1: row[pricelist.prop1.to_i - 1],
-      prop2: row[pricelist.prop2.to_i - 1],
-      prop3: row[pricelist.prop3.to_i - 1],
-      prop4: row[pricelist.prop4.to_i - 1]
+      brand: row[pricelist.brand.to_i - 1],
+      skin: row[pricelist.skin.to_i - 1],
+      hair: row[pricelist.hair.to_i - 1],
+      color: row[pricelist.color.to_i - 1]
+      
+    }
+
+    variant = pricelist.parent_column.present? ? row[pricelist.parent_column.to_i - 1] : nil
+    
+    options={
+      variant: variant,
+      otype1_label: pricelist.otype1_label.present? ? pricelist.otype1_label : nil ,
+      otype2_label: pricelist.otype2_label.present? ? pricelist.otype2_label : nil,
+      otype3_label: pricelist.otype3_label.present? ? pricelist.otype3_label : nil,
+      otype4_label: pricelist.otype4_label.present? ? pricelist.otype4_label : nil,
+      otype1: pricelist.otype1.present? ? row[pricelist.otype1.to_i - 1] : nil,
+      otype2: pricelist.otype2.present? ? row[pricelist.otype2.to_i - 1] : nil,
+      otype3: pricelist.otype3.present? ? row[pricelist.otype3.to_i - 1] : nil,
+      otype4: pricelist.otype4.present? ? row[pricelist.otype4.to_i - 1] : nil
+
     }
 
     if row_is_taxon?(row)
@@ -78,7 +94,7 @@ class Spree::Importers::BaseImporter
         # we need this cause we want to check products that gone from price
         @parsed_products << attrs[:name]
         # byebug
-        Spree::DataFactoryWorker.perform_async(pricelist.id, taxonomy.id, taxon.id, attrs, properties)
+        Spree::DataFactoryWorker.perform_async(pricelist.id, taxonomy.id, taxon.id, attrs, properties, options)
       end
       @up = true
     end

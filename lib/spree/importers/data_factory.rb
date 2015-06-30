@@ -2,12 +2,13 @@ class Spree::Importers::DataFactory
 
     attr_reader :log, :taxonomy, :taxon, :attrs, :pricelist
 
-    def initialize(pricelist_id, taxonomy_id, taxon_id, attrs={}, properties={})
+    def initialize(pricelist_id, taxonomy_id, taxon_id, attrs={}, properties={}, options={})
         @log = Logger.new(STDOUT)
         @taxonomy = Spree::Taxonomy.find(taxonomy_id)
         @taxon = Spree::Taxon.find(taxon_id)
         @attrs = attrs
         @properties = properties
+        @options = options
         @pricelist = Spree::Pricelist.find(pricelist_id)
         prepare_attrs
     end
@@ -45,37 +46,82 @@ class Spree::Importers::DataFactory
 
     def create_product
         log.info("Создан новый товар! Наименование: #{attrs['name']} | Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s} | Артикул: #{attrs['sku'].to_s}")
-        
-        product = Spree::Product.create!(attrs.merge(pricelist_id: pricelist.id, shipping_category_id: Spree::ShippingCategory.first.id).except('quantity'))
-        product.taxons << taxon
-        product.update_stock_from_pricelist(attrs)
-        # byebug
-        Dir.chdir(Rails.root)
-        Dir.chdir('.'+@pricelist.image_dir_column)
-        if File.exists? attrs['sku'].to_s+'.JPEG'
-            log.info("Создаем изображение к товару #{attrs['name']}")
-            image_file = File.open(attrs['sku'].to_s+'.JPEG')
-            image = product.images.create(:attachment => image_file, :alt => product.name.to_s)
-            image_file.close
-            
-        end
-        
-        @properties.each do |k, v|
+        unless @options['variant'].nil?
+            unless Spree::Variant.find_by_sku(attrs['sku'])
+                create_variants
+            end
+        else
+            product = Spree::Product.create!(attrs.merge(pricelist_id: pricelist.id, shipping_category_id: Spree::ShippingCategory.first.id).except('quantity'))
+            product.taxons << taxon
+            product.update_stock_from_pricelist(attrs)
+            # byebug
+            Dir.chdir(Rails.root)
+            Dir.chdir('.'+@pricelist.image_dir_column)
+            if File.exists? attrs['sku'].to_s+'.JPEG'
+
+                log.info("Создаем изображение к товару #{attrs['name']}")
+                image_file = File.open(attrs['sku'].to_s+".JPEG")
+                image = product.images.create(:attachment => image_file, :alt => product.name.to_s)
+                image_file.close
+                i=1
+                while File.exists? attrs['sku'].to_s+"_#{i}.JPEG" do
+                    image_file = File.open(attrs['sku'].to_s+"_#{i}.JPEG")
+                    image = product.images.create(:attachment => image_file, :alt => product.name.to_s)
+                    image_file.close
+                    i+=1
+                end
+            end
+
+            @properties.each do |k, v|
             # byebug
             unless @properties[k].nil?  
                 case @properties[k]
-                when @properties['prop1']
+                when @properties['brand']
                     property = Spree::Property.where(name: "Бренд").first_or_create!(presentation: "Бренд")
-                when @properties['prop2']
+                when @properties['skin']
                     property = Spree::Property.where(name: "Тип кожи").first_or_create!(presentation: "Тип кожи")
-                when @properties['prop3']
+                when @properties['hair']
                     property = Spree::Property.where(name: "Тип волос").first_or_create!(presentation: "Тип волос")
-                when @properties['prop4']
-                    property = Spree::Property.where(name: "Оттенок").first_or_create!(presentation: "Оттенок")
+                when @properties['color']
+                    property = Spree::Property.where(name: "Цвет").first_or_create!(presentation: "Цвет")
                 end
                 product.product_properties.where(property_id: property.id).find_or_create_by(value: @properties[k]) 
             end
         end
+        
+        end
+
+        
+    end
+
+    def create_variants
+        # byebug
+        log.info("Создан новый вариант к товару! Наименование: #{attrs['name']} | Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s} | Артикул: #{attrs['sku'].to_s}")
+        product = Spree::Product.find(Spree::Variant.find_by_sku(@options['variant']).product_id)
+        variant = product.variants.create!(price: attrs['price'], sku: attrs['sku'])       
+        if File.exists? attrs['sku'].to_s+'.JPEG'
+            log.info("Создаем изображение к варианту #{attrs['name']}")
+            image_file = File.open(attrs['sku'].to_s+'.JPEG')
+            image = variant.images.create(:attachment => image_file, :alt => product.name.to_s)
+            image_file.close
+            i=1
+            while File.exists? attrs['sku'].to_s+"_#{i}.JPEG" do
+                image_file = File.open(attrs['sku'].to_s+"_#{i}.JPEG")
+                image = product.images.create(:attachment => image_file, :alt => product.name.to_s)
+                image_file.close
+                i+=1
+            end
+        end
+        # byebug
+        y =1
+        while !@options["otype#{y}_label"].nil? do
+           option_type = Spree::OptionType.where(name: @options["otype#{y}_label"]).first_or_create!(presentation: @options["otype#{y}_label"])
+            product.product_option_types.where(option_type_id: option_type.id).first_or_create!
+            variant.option_values << Spree::OptionValue.where(name: @options["otype#{y}"]).first_or_create!(name: @options["otype#{y}"], presentation: @options["otype#{y}"], option_type_id: option_type.id) 
+            y += 1
+        end
+        
+            
     end
 
     def handle_missing_product
