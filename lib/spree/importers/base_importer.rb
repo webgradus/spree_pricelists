@@ -16,14 +16,13 @@ class Spree::Importers::BaseImporter
     @taxon = Spree::Taxon.find_or_create_by(:name => @pricelist.name)
     @taxonomy = @taxon.taxonomy
     @parsed_products = []
-    @taxon_root = Spree::Taxon.where(:name=>@pricelist.name).first
+    @taxon_root = Spree::Taxon.where(:name => @pricelist.name).first
     
   end
 
   def import
     log.info("#"*25 << "Start #{Time.now.to_s}" << "#"*25)
     current_row = 1
-    # byebug
     CSV.foreach(file_path, col_sep: ';') do |row|
       parse_csv_row(row) if current_row >= starting_row.to_i
       current_row += 1
@@ -44,8 +43,8 @@ class Spree::Importers::BaseImporter
   end
 
   def clear_tmp_files
-    Dir["tmp/*.xlsx"].each{ |f| File.delete(f)}
-    Dir["tmp/*.csv"].each{ |f| File.delete(f)}
+    Dir["tmp/*.xlsx"].each { |f| File.delete(f) }
+    Dir["tmp/*.csv"].each { |f| File.delete(f) }
   end
 
   def parse_csv_row(row)
@@ -62,17 +61,24 @@ class Spree::Importers::BaseImporter
               available_on: Time.now
     }
 
-    properties = {
-      brand: row[pricelist.brand.to_i - 1],
-      skin: row[pricelist.skin.to_i - 1],
-      hair: row[pricelist.hair.to_i - 1],
-      color: row[pricelist.color.to_i - 1]
-      
+    product_properties = {
+      property1_label: pricelist.property1_label.present? ? pricelist.property1_label : nil ,
+      property2_label: pricelist.property2_label.present? ? pricelist.property2_label : nil ,
+      property3_label: pricelist.property3_label.present? ? pricelist.property3_label : nil ,
+      property4_label: pricelist.property4_label.present? ? pricelist.property4_label : nil ,
+      property5_label: pricelist.property5_label.present? ? pricelist.property5_label : nil ,
+      property6_label: pricelist.property6_label.present? ? pricelist.property6_label : nil ,
+      property1: pricelist.property1.present? ? row[pricelist.property1.to_i - 1] : nil ,
+      property2: pricelist.property2.present? ? row[pricelist.property2.to_i - 1] : nil ,
+      property3: pricelist.property3.present? ? row[pricelist.property3.to_i - 1] : nil ,
+      property4: pricelist.property4.present? ? row[pricelist.property4.to_i - 1] : nil ,
+      property5: pricelist.property5.present? ? row[pricelist.property5.to_i - 1] : nil ,
+      property6: pricelist.property6.present? ? row[pricelist.property6.to_i - 1] : nil 
     }
 
     variant = pricelist.parent_column.present? ? row[pricelist.parent_column.to_i - 1] : nil
     
-    options={
+    options = {
       variant: variant,
       otype1_label: pricelist.otype1_label.present? ? pricelist.otype1_label : nil ,
       otype2_label: pricelist.otype2_label.present? ? pricelist.otype2_label : nil,
@@ -86,15 +92,13 @@ class Spree::Importers::BaseImporter
     }
 
     if row_is_taxon?(row)
-      # byebug
       create_taxon(row)
       @up = false
     else
       if valid?(attrs)
         # we need this cause we want to check products that gone from price
         @parsed_products << attrs[:name]
-        # byebug
-        Spree::DataFactoryWorker.perform_async(pricelist.id, taxonomy.id, taxon.id, attrs, properties, options)
+        Spree::DataFactoryWorker.perform_async(pricelist.id, taxonomy.id, taxon.id, attrs, product_properties, options)
       end
       @up = true
     end
@@ -147,7 +151,7 @@ class Spree::Importers::BaseImporter
   end
 
   def self.delayed_start(parser_id, file_path,begin_point)
-    Spree::ImportPricelistWorker.perform_async(parser_id, file_path,begin_point)
+    Spree::ImportPricelistWorker.perform_async(parser_id, file_path, begin_point)
   end
 
   def self.create_tmp_csv_file(file)

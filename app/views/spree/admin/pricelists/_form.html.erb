@@ -1,6 +1,6 @@
 <div class="row">
-  <div class="col-sm-4">
-    
+  <div class="col-sm-3">
+    <h4>Основная информация</h4>
   
     <div class="four columns lh">
       <%= f.field_container :name do %>
@@ -74,42 +74,113 @@
 
   </div>
 
-  <div class="col-sm-4">
-    <h3>Свойства товара</h3>
-    <div class="four columns lh">
-      <%= f.field_container :brand do %>
-        <%= f.label :brand, 'Бренд' %>
-        <br/>
-        <%= f.text_field :brand, :class => 'fullwidth' %>
-      <% end %>
-    </div>
-  
-  <div class="four columns lh">
-      <%= f.field_container :skin do %>
-        <%= f.label :skin, 'Тип кожи' %>
-        <br/>
-        <%= f.text_field :skin, :class => 'fullwidth' %>
-      <% end %>
-    </div>
-    <div class="four columns lh">
-      <%= f.field_container :hair do %>
-        <%= f.label :hair, 'Тип волос' %>
-        <br/>
-        <%= f.text_field :hair, :class => 'fullwidth' %>
-      <% end %>
-    </div>
-    <div class="four columns lh">
-      <%= f.field_container :color do %>
-        <%= f.label :color, 'Цвет' %>
-        <br/>
-        <%= f.text_field :color, :class => 'fullwidth' %>
-      <% end %>
-    </div>
-    
+  <div class="col-sm-5">
+    <h4>Характеристики</h4>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="four columns lh">
+          <%= f.field_container :property1_label do %>
+            <%= f.label :property1_label, 'Название' %>
+            <br/>
+            <%= f.text_field :property1_label, :class => 'fullwidth' %>
+          <% end %>
+        </div>
+
+        <div class="four columns lh">
+          <%= f.field_container :property2_label do %>
+            <%= f.label :property2_label, 'Название' %>
+            <br/>
+            <%= f.text_field :property2_label, :class => 'fullwidth' %>
+          <% end %>
+        </div>
+
+        <div class="four columns lh">
+          <%= f.field_container :property3_label do %>
+            <%= f.label :property3_label, 'Название' %>
+            <br/>
+            <%= f.text_field :property3_label, :class => 'fullwidth' %>
+          <% end %>
+        </div>
+
+        <div class="four columns lh">
+          <%= f.field_container :property4_label do %>
+            <%= f.label :property4_label, 'Название' %>
+            <br/>
+            <%= f.text_field :property4_label, :class => 'fullwidth' %>
+          <% end %>
+        </div>
+
+        <div class="four columns lh">
+          <%= f.field_container :property5_label do %>
+            <%= f.label :property5_label, 'Название' %>
+            <br/>
+            <%= f.text_field :property5_label, :class => 'fullwidth' %>
+          <% end %>
+        </div>
+
+        <div class="four columns lh">
+          <%= f.field_container :property6_label do %>
+            <%= f.label :property6_label, 'Название' %>
+            <br/>
+            <%= f.text_field :property6_label, :class => 'fullwidth' %>
+          <% end %>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="four columns lh">
+          <%= f.field_container :property1 do %>
+            <%= f.label :property1, 'Столбец со значением' %>
+            <br/>
+            <%= f.text_field :property1, :class => 'fullwidth' %>
+          <% end %>
+        </div>
+
+        <div class="four columns lh">
+          <%= f.field_container :property2 do %>
+            <%= f.label :property2, 'Столбец со значением' %>
+            <br/>
+            <%= f.text_field :property2, :class => 'fullwidth' %>
+          <% end %>
+        </div>
+
+        <div class="four columns lh">
+          <%= f.field_container :property3 do %>
+            <%= f.label :property3, 'Столбец со значением' %>
+            <br/>
+            <%= f.text_field :property3, :class => 'fullwidth' %>
+          <% end %>
+        </div>
+
+        <div class="four columns lh">
+          <%= f.field_container :property4 do %>
+            <%= f.label :property4, 'Столбец со значением' %>
+            <br/>
+            <%= f.text_field :property4, :class => 'fullwidth' %>
+          <% end %>
+        </div>
+
+        <div class="four columns lh">
+          <%= f.field_container :property5 do %>
+            <%= f.label :property5, 'Столбец со значением' %>
+            <br/>
+            <%= f.text_field :property5, :class => 'fullwidth' %>
+          <% end %>
+        </div>
+
+        <div class="four columns lh">
+          <%= f.field_container :property6 do %>
+            <%= f.label :property6, 'Столбец со значением' %>
+            <br/>
+            <%= f.text_field :property6, :class => 'fullwidth' %>
+          <% end %>
+        </div>
+      </div>
+
+  </div>
   </div>
 
   <div class="col-sm-4">
-    <h3>Товарные опции для вариантов</h3>
+    <h4>Товарные опции для вариантов</h4>
     <div class="row">
       <div class="col-sm-6">
         <div class="four columns ">
