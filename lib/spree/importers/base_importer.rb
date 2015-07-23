@@ -137,9 +137,8 @@ class Spree::Importers::BaseImporter
 
   def save_taxon(parent, row)
     log.info("Переназначаем родителя #{taxon.name}")
-    
     # tax = Spree::Taxon.where("name ILIKE ?", row.compact.first.to_s).map{|x| x if x.parent_id == parent.id or (x.parent.parent_id == parent.id if x.parent)}.compact.first
-    tax = Spree::Taxon.where(:name=>row.compact.first.to_s).map{|x| x if x.parent_id == parent.id or (x.parent.parent_id == parent.id if x.parent)}.compact.first
+    tax = Spree::Taxon.where(:name => row.compact.first.to_s).map{|x| x if x.parent_id == parent.id or (x.parent.parent_id == parent.id if x.parent) or (x.parent.parent.parent_id == parent.id if x.parent.parent)}.compact.first
     if tax.nil?
       tax = Spree::Taxon.new(:name=>row.compact.first.mb_chars.capitalize.to_s)
       
