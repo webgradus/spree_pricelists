@@ -60,7 +60,6 @@ class Spree::Importers::BaseImporter
               quantity: pricelist.quantity_column.present? ? row[pricelist.quantity_column.to_i - 1].to_i : nil,
               available_on: Time.now
     }
-
     product_properties = {
       property1_label: pricelist.property1_label.present? ? pricelist.property1_label : nil ,
       property2_label: pricelist.property2_label.present? ? pricelist.property2_label : nil ,

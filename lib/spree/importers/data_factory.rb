@@ -7,6 +7,7 @@ class Spree::Importers::DataFactory
       @taxonomy = Spree::Taxonomy.find(taxonomy_id)
       @taxon = Spree::Taxon.find(taxon_id)
       @attrs = attrs
+      @attrs['price'] = attrs['price'].to_d
       @product_properties = product_properties
       @options = options
       @pricelist = Spree::Pricelist.find(pricelist_id)
@@ -46,14 +47,15 @@ class Spree::Importers::DataFactory
 
     def create_product
       log.info("Создан новый товар! Наименование: #{attrs['name']} | Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s} | Артикул: #{attrs['sku'].to_s}")
-      
+
       if @options['variant'].present? && @options['variant'] != attrs['sku']
         create_variants
       else
+        
         product = Spree::Product.create!(attrs.merge(pricelist_id: pricelist.id, shipping_category_id: Spree::ShippingCategory.first.id).except('quantity'))
         product.taxons << taxon
         product.update_stock_from_pricelist(attrs)
-        
+
         Dir.chdir(Rails.root)
         Dir.chdir('.' + @pricelist.image_dir_column)
 
