@@ -7,7 +7,6 @@ class Spree::Importers::DataFactory
       @taxonomy = Spree::Taxonomy.find(taxonomy_id)
       @taxon = Spree::Taxon.find(taxon_id)
       @attrs = attrs
-      byebug
       @attrs['price'] = attrs['price'].to_d
       @product_properties = product_properties
       @options = options
