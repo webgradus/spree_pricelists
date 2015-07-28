@@ -110,7 +110,7 @@ class Spree::Importers::BaseImporter
 
   def prepare_price(price_value)
     # OVERRIDE THIS IN SUBCLASSES IF NECESSARY
-    price_value.to_f * (pricelist.margin || 1)
+    (price_value.to_f * pricelist.margin).to_s
   end
 
   def row_is_taxon?(row)
