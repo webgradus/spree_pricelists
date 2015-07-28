@@ -7,7 +7,6 @@ class Spree::Importers::DataFactory
       @taxonomy = Spree::Taxonomy.find(taxonomy_id)
       @taxon = Spree::Taxon.find(taxon_id)
       @attrs = attrs
-      @attrs['price'] = attrs['price'].to_d
       @product_properties = product_properties
       @options = options
       @pricelist = Spree::Pricelist.find(pricelist_id)
@@ -36,39 +35,40 @@ class Spree::Importers::DataFactory
       unless attrs['sku'].present?
           @attrs['sku'] = "%06d" % rand(999999)
       end
+      @attrs['price'] = attrs['price'].to_d
     end
 
     def update_product(product)
-      log.info("Товар #{attrs['name']} найден в таблице! Обновляем атрибуты: Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s}")
-      product.update(attrs.merge(pricelist_id: pricelist.id).except('sku', 'quantity', 'name', 'desc'))
+      log.info("Товар #{@attrs['name']} найден в таблице! Обновляем атрибуты: Cебестоимость: #{@attrs['cost_price'].to_f.to_s} | Цена: #{@attrs['price'].to_f.to_s}")
+      product.update(@attrs.merge(pricelist_id: pricelist.id).except('sku', 'quantity', 'name', 'desc'))
       product.taxons << taxon unless product.taxons.exists?(taxon)
-      product.update_stock_from_pricelist(attrs)
+      product.update_stock_from_pricelist(@attrs)
     end
 
     def create_product
-      log.info("Создан новый товар! Наименование: #{attrs['name']} | Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s} | Артикул: #{attrs['sku'].to_s}")
+      log.info("Создан новый товар! Наименование: #{@attrs['name']} | Cебестоимость: #{@attrs['cost_price'].to_f.to_s} | Цена: #{@attrs['price'].to_f.to_s} | Артикул: #{@attrs['sku'].to_s}")
 
-      if @options['variant'].present? && @options['variant'] != attrs['sku']
+      if @options['variant'].present? && @options['variant'] != @attrs['sku']
         create_variants
       else
         
-        product = Spree::Product.create!(attrs.merge(pricelist_id: pricelist.id, shipping_category_id: Spree::ShippingCategory.first.id).except('quantity'))
+        product = Spree::Product.create!(@attrs.merge(pricelist_id: pricelist.id, shipping_category_id: Spree::ShippingCategory.first.id).except('quantity'))
         product.taxons << taxon
-        product.update_stock_from_pricelist(attrs)
+        product.update_stock_from_pricelist(@attrs)
 
         Dir.chdir(Rails.root)
         Dir.chdir('.' + @pricelist.image_dir_column)
 
         # check if image exist and attach it to variant
-        if File.exists? attrs['sku'].to_s + '.JPEG'
-          log.info("Создаем изображение к товару #{attrs['name']}")
-          image_file = File.open(attrs['sku'].to_s+".JPEG")
+        if File.exists? @attrs['sku'].to_s + '.JPEG'
+          log.info("Создаем изображение к товару #{@attrs['name']}")
+          image_file = File.open(@attrs['sku'].to_s+".JPEG")
           image = product.images.create(:attachment => image_file, :alt => product.name.to_s)
           image_file.close
 
           i = 1
-          while File.exists? attrs['sku'].to_s + "_#{i}.JPEG" do
-            image_file = File.open(attrs['sku'].to_s + "_#{i}.JPEG")
+          while File.exists? @attrs['sku'].to_s + "_#{i}.JPEG" do
+            image_file = File.open(@attrs['sku'].to_s + "_#{i}.JPEG")
             image = product.images.create(:attachment => image_file, :alt => product.name.to_s)
             image_file.close
             i += 1
@@ -94,19 +94,19 @@ class Spree::Importers::DataFactory
       else
         product = Spree::Product.find(Spree::Variant.find_by_sku(@options['variant']).product_id)
         
-        variant = product.variants.create!(price: attrs['price'], sku: attrs['sku']) 
+        variant = product.variants.create!(price: @attrs['price'], sku: @attrs['sku']) 
         
-        log.info("Создан новый вариант к товару! Наименование: #{attrs['name']} | Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s} | Артикул: #{attrs['sku'].to_s}")      
+        log.info("Создан новый вариант к товару! Наименование: #{@attrs['name']} | Cебестоимость: #{@attrs['cost_price'].to_f.to_s} | Цена: #{@attrs['price'].to_f.to_s} | Артикул: #{@attrs['sku'].to_s}")      
         
         # check if image exist and attach it to variant
-        if File.exists? attrs['sku'].to_s + '.JPEG'
-          log.info("Создаем изображение к варианту #{attrs['name']}")
-          image_file = File.open(attrs['sku'].to_s + '.JPEG')
+        if File.exists? @attrs['sku'].to_s + '.JPEG'
+          log.info("Создаем изображение к варианту #{@attrs['name']}")
+          image_file = File.open(@attrs['sku'].to_s + '.JPEG')
           image = variant.images.create(:attachment => image_file, :alt => product.name.to_s)
           image_file.close
           i = 1
-          while File.exists? attrs['sku'].to_s + "_#{i}.JPEG" do
-            image_file = File.open(attrs['sku'].to_s + "_#{i}.JPEG")
+          while File.exists? @attrs['sku'].to_s + "_#{i}.JPEG" do
+            image_file = File.open(@attrs['sku'].to_s + "_#{i}.JPEG")
             image = product.images.create(:attachment => image_file, :alt => product.name.to_s)
             image_file.close
             i += 1
@@ -125,9 +125,9 @@ class Spree::Importers::DataFactory
     end
 
     def handle_missing_product
-      conflict = Spree::Conflict.find_by_product_name(attrs['name'])
+      conflict = Spree::Conflict.find_by_product_name(@attrs['name'])
       similar_data_present = unless conflict
-                                 sim_prods = Spree::ProductSynonim.name_matching(attrs['name']).with_pg_search_rank.limit(1)
+                                 sim_prods = Spree::ProductSynonim.name_matching(@attrs['name']).with_pg_search_rank.limit(1)
                                  sim_prods.present? && sim_prods[0].pg_search_rank > Spree::Importers::MIN_PG_SEARCH_RANK ? true : false
                              end
       # if similar_data_present || conflict.present?
@@ -139,11 +139,11 @@ class Spree::Importers::DataFactory
     end
 
     def handle_conflict(conflict)
-      log.warn("Товар с похожим наименованием существует!(#{attrs['name']})")
+      log.warn("Товар с похожим наименованием существует!(#{@attrs['name']})")
       if conflict
-        conflict.update_attributes(sku: attrs['sku'], cost_price: attrs['cost_price'], price: attrs['price'], pricelist_id: pricelist.id, quantity: attrs['quantity'])
+        conflict.update_attributes(sku: @attrs['sku'], cost_price: @attrs['cost_price'], price: @attrs['price'], pricelist_id: pricelist.id, quantity: @attrs['quantity'])
       else
-        Spree::Conflict.create(product_name: attrs['name'], cost_price: attrs['cost_price'], price: attrs['price'], sku: attrs['sku'], provider_name: taxonomy.name, pricelist_id: pricelist.id, quantity: attrs['quantity'])
+        Spree::Conflict.create(product_name: @attrs['name'], cost_price: @attrs['cost_price'], price: @attrs['price'], sku: @attrs['sku'], provider_name: taxonomy.name, pricelist_id: pricelist.id, quantity: @attrs['quantity'])
       end
     end
 end
