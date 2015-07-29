@@ -96,6 +96,8 @@ class Spree::Importers::DataFactory
         
         variant = product.variants.create!(price: @attrs['price'], sku: @attrs['sku']) 
         
+        variant.update_stock_from_pricelist(@attrs)
+        
         log.info("Создан новый вариант к товару! Наименование: #{@attrs['name']} | Cебестоимость: #{@attrs['cost_price'].to_f.to_s} | Цена: #{@attrs['price'].to_f.to_s} | Артикул: #{@attrs['sku'].to_s}")      
         
         # check if image exist and attach it to variant
