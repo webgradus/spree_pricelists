@@ -14,7 +14,7 @@ Spree::Variant.class_eval do
               stock_movement.stock_item.update_attributes(backorderable: false)
               stock_movement.save!
           else
-              stock_item = stock_location.stock_item_or_create(self.master)
+              stock_item = stock_location.stock_item_or_create(self)
               stock_item.update_attributes(backorderable: true)
           end
       end
