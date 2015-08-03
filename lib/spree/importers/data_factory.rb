@@ -95,7 +95,7 @@ class Spree::Importers::DataFactory
         product = Spree::Product.find(Spree::Variant.find_by_sku(@options['variant']).product_id)
         
         variant = product.variants.create!(price: @attrs['price'], sku: @attrs['sku']) 
-        byebug
+
         # если нужно отображение имени варианта
         if Spree::Variant.column_names.include? "title"
           variant.update(:title => @attrs['name'])
