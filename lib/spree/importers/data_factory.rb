@@ -50,11 +50,17 @@ class Spree::Importers::DataFactory
 
       if @options['variant'].present? && @options['variant'] != @attrs['sku']
         create_variants
+
       else
-        
+
         product = Spree::Product.create!(@attrs.merge(pricelist_id: pricelist.id, shipping_category_id: Spree::ShippingCategory.first.id).except('quantity'))
         product.taxons << taxon
         product.update_stock_from_pricelist(@attrs)
+
+        #hack , update quantity of master-variant
+        if  @options['variant'].present? && @options['variant'] == @attrs['sku']
+            Spree::DataFactoryWorker.perform_in(20.minutes, @pricelist.id, @taxonomy.id, @taxon.id, @attrs, @properties, @options)
+        end
 
         Dir.chdir(Rails.root)
         Dir.chdir('.' + @pricelist.image_dir_column)
@@ -93,18 +99,19 @@ class Spree::Importers::DataFactory
         Spree::DataFactoryWorker.perform_in(10.minutes, @pricelist.id, @taxonomy.id, @taxon.id, @attrs, @properties, @options)
       else
         product = Spree::Product.find(Spree::Variant.find_by_sku(@options['variant']).product_id)
-        
-        variant = product.variants.create!(price: @attrs['price'], sku: @attrs['sku']) 
+
+        variant = product.variants.create!(price: @attrs['price'], sku: @attrs['sku'])
 
         # если нужно отображение имени варианта
         if Spree::Variant.column_names.include? "title"
           variant.update(:title => @attrs['name'])
         end
 
+        # остатки на складе
         variant.update_stock_from_pricelist(@attrs)
-        
-        log.info("Создан новый вариант к товару! Наименование: #{@attrs['name']} | Cебестоимость: #{@attrs['cost_price'].to_f.to_s} | Цена: #{@attrs['price'].to_f.to_s} | Артикул: #{@attrs['sku'].to_s}")      
-        
+
+        log.info("Создан новый вариант к товару! Наименование: #{@attrs['name']} | Cебестоимость: #{@attrs['cost_price'].to_f.to_s} | Цена: #{@attrs['price'].to_f.to_s} | Артикул: #{@attrs['sku'].to_s}")
+
         # check if image exist and attach it to variant
         if File.exists? @attrs['sku'].to_s + '.JPEG'
           log.info("Создаем изображение к варианту #{@attrs['name']}")
@@ -118,13 +125,13 @@ class Spree::Importers::DataFactory
             image_file.close
             i += 1
           end
-          
-          
+
+
           y = 1
           while @options["otype#{y}_label"].present? && @options["otype#{y}"].present? do
             option_type = Spree::OptionType.where(name: @options["otype#{y}_label"]).first_or_create!(presentation: @options["otype#{y}_label"])
             product.product_option_types.where(option_type_id: option_type.id).first_or_create!
-            variant.option_values << Spree::OptionValue.where(name: @options["otype#{y}"]).first_or_create!(name: @options["otype#{y}"], presentation: @options["otype#{y}"], option_type_id: option_type.id) 
+            variant.option_values << Spree::OptionValue.where(name: @options["otype#{y}"]).first_or_create!(name: @options["otype#{y}"], presentation: @options["otype#{y}"], option_type_id: option_type.id)
             y += 1
           end
         end
