@@ -59,7 +59,7 @@ class Spree::Importers::DataFactory
 
         #hack , update quantity of master-variant
         if  @options['variant'].present? && @options['variant'] == @attrs['sku']
-            Spree::DataFactoryWorker.perform_in(20.minutes, @pricelist.id, @taxonomy.id, @taxon.id, @attrs, @properties, @options)
+            Spree::UpdateMasterQuantityWorker.perform_in(50.minutes, product.id, @attrs['quantity'])
         end
 
         Dir.chdir(Rails.root)
@@ -102,12 +102,12 @@ class Spree::Importers::DataFactory
 
         variant = product.variants.create!(price: @attrs['price'], sku: @attrs['sku'])
 
-        # если нужно отображение имени варианта
+        # if variant name is needed
         if Spree::Variant.column_names.include? "title"
           variant.update(:title => @attrs['name'])
         end
 
-        # остатки на складе
+        # update stock
         variant.update_stock_from_pricelist(@attrs)
 
         log.info("Создан новый вариант к товару! Наименование: #{@attrs['name']} | Cебестоимость: #{@attrs['cost_price'].to_f.to_s} | Цена: #{@attrs['price'].to_f.to_s} | Артикул: #{@attrs['sku'].to_s}")
