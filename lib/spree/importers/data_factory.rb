@@ -57,11 +57,6 @@ class Spree::Importers::DataFactory
         product.taxons << taxon
         product.update_stock_from_pricelist(@attrs)
 
-        #hack , update quantity of master-variant
-        if  @options['variant'].present? && @options['variant'] == @attrs['sku']
-            Spree::UpdateMasterQuantityWorker.perform_in(50.minutes, product.id, @attrs['quantity'])
-        end
-
         Dir.chdir(Rails.root)
         Dir.chdir('.' + @pricelist.image_dir_column)
 
