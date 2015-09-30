@@ -8,7 +8,7 @@ Spree::Product.class_eval do
   before_update :update_synonim, if: lambda {|product| product.name_changed? }
   after_create :add_synonim
 
-  scope :find_by_synonim, lambda { |name| includes(:product_synonims).where("spree_product_synonims.name = ?", name).limit(1)}
+  scope :find_by_synonim, lambda { |name| joins(:product_synonims).where("spree_product_synonims.name = ?", name).limit(1)}
 
   pg_search_scope :name_matching,
     associated_against: {product_synonims: :name},
@@ -19,7 +19,7 @@ Spree::Product.class_eval do
     ranked_by: "1.2 * :trigram + 0.5 * :tsearch"
 
   def add_synonim(product_name=nil)
-    self.product_synonims.find_or_create_by_name(product_name || self.name)
+    self.product_synonims.find_or_create_by(:name => product_name || self.name)
   end
 
   def update_stock_from_pricelist(attrs)

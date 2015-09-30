@@ -1,0 +1,7 @@
+<% if can? :admin, Spree::Pricelist %>
+<ul class="nav nav-sidebar">
+  <%#= tab Spree::Pricelist, url: new_import_admin_pricelists_path, icon: 'file', label: Spree::Pricelist.model_name.human(count: :many) %>
+  <%= main_menu_tree 'Импорт прайслиста', icon: "th-large", sub_menu: "pricelist", url: "#sidebar-pricelist" %>
+  <%#= tab Spree::Pricelist, url: new_import_admin_pricelists_path, icon: "th-large" %>
+</ul>
+<% end %>

@@ -1,4 +1,4 @@
-module Spree
+ module Spree
   module Admin
     class PricelistsController < BaseController
       def index
