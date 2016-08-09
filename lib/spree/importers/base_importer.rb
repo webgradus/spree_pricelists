@@ -17,13 +17,12 @@ class Spree::Importers::BaseImporter
     @taxonomy = @taxon.taxonomy
     @parsed_products = []
     @taxon_root = Spree::Taxon.find_by_name(@pricelist.name)
-    
+
   end
 
   def import
     log.info("#"*25 << "Start #{Time.now.to_s}" << "#"*25)
     current_row = 1
-    # byebug
     CSV.foreach(file_path, col_sep: ';') do |row|
       parse_csv_row(row) if current_row >= starting_row.to_i
       current_row += 1
@@ -60,7 +59,6 @@ class Spree::Importers::BaseImporter
               #available_on: ::Time.now
     }
     if row_is_taxon?(row)
-      # byebug
       create_taxon(row)
       @up = false
     else

@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.description = 'Extension for loading and updating products from XLS pricelists'
   s.required_ruby_version = '>= 1.9.3'
 
-  # s.author    = 'You'
+  s.author      = 'Webgradus'
   # s.email     = 'you@example.com'
   # s.homepage  = 'http://www.spreecommerce.com'
 
@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', '~> 2.4.3'
+  s.add_dependency 'spree_core', '~> 3.1.0'
   s.add_dependency 'sidekiq'
   s.add_dependency 'pg_search'
 
