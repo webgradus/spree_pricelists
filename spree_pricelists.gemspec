@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', '~> 2.1.0'
+  s.add_dependency 'spree_core', '~> 3.1.0'
   s.add_dependency 'sidekiq'
   s.add_dependency 'pg_search'
 
