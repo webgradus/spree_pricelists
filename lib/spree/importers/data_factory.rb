@@ -37,7 +37,7 @@ class Spree::Importers::DataFactory
 
     def update_product(product)
         log.info("Товар #{attrs['name']} найден в таблице! Обновляем атрибуты: Cебестоимость: #{attrs['cost_price'].to_f.to_s} | Цена: #{attrs['price'].to_f.to_s}")
-        product.update_attributes(attrs.merge(pricelist_id: pricelist.id).except('sku', 'quantity', 'name'))
+        product.update(attrs.merge(pricelist_id: pricelist.id).except('sku', 'quantity', 'name'))
         product.taxons << taxon unless product.taxons.exists?(taxon)
         product.update_stock_from_pricelist(attrs)
     end
@@ -52,7 +52,7 @@ class Spree::Importers::DataFactory
     def handle_missing_product
         conflict = Spree::Conflict.find_by_product_name(attrs['name'])
         similar_data_present = unless conflict
-                                   sim_prods = Spree::ProductSynonim.name_matching(attrs['name']).limit(1)
+                                   sim_prods = Spree::ProductSynonim.name_matching(attrs['name']).with_pg_search_rank.limit(1)
                                    sim_prods.present? && sim_prods[0].pg_search_rank > Spree::Importers::MIN_PG_SEARCH_RANK ? true : false
                                end
         if similar_data_present || conflict.present?
