@@ -13,9 +13,11 @@ class Spree::Importers::BaseImporter
     @pricelist = pricelist
     @starting_row = begin_point
     @file_path = file_path
-    @taxonomy = Spree::Taxonomy.where(:name => @pricelist.name).first_or_create!
-    @taxon = @taxonomy.root
+    @taxon = Spree::Taxon.find_or_create_by(:name => @pricelist.name)
+    @taxonomy = @taxon.taxonomy
     @parsed_products = []
+    @taxon_root = Spree::Taxon.find_by_name(@pricelist.name)
+
   end
 
   def import
@@ -30,6 +32,10 @@ class Spree::Importers::BaseImporter
   end
 
   protected
+
+  def self.find_all_by_name(name)
+    find(:all, :conditions => ["LOWER(name) = ?", name.downcase])
+  end
 
   def update_missed_products
     # we need to delay it cause we need to make sure all DataFactory workers were done
@@ -80,27 +86,27 @@ class Spree::Importers::BaseImporter
   end
 
   def create_taxon(row)
-    if @up
-      parent = taxon.parent
-      parent = parent || taxonomy.root
-    else
-      parent = taxon
-      if taxon.products.count(:id) == 0 && taxon.parent_id != taxonomy.root.id && !taxon.parent_id.nil?
-        log.info("Переназначаем родителя #{taxon.name}")
-        taxon.parent = taxonomy.root
-        taxon.permalink=''
-        taxon.set_permalink
-        taxon.save
-      end
-    end
-    @taxon = save_taxon(parent, row)
+    # if @up
+    #   parent = taxon.parent
+    #   parent = parent || @taxon_root
+    # else
+    #   parent = taxon
+    #   if taxon.products.count(:id) == 0 && taxon.parent_id != taxonomy.root.id && !taxon.parent_id.nil?
+    #     log.info("Переназначаем родителя #{taxon.name}")
+    #     taxon.parent = taxonomy.root
+    #     taxon.permalink=''
+    #     taxon.set_permalink
+    #     taxon.save
+    #   end
+    # end
+    @taxon = save_taxon(@taxon_root, row)
   end
 
   def save_taxon(parent, row)
     log.info("Переназначаем родителя #{taxon.name}")
-    tax = Spree::Taxon.where(:name=>row.compact.first.to_s,:taxonomy_id => taxonomy.id,:parent_id=>parent.id).first
+    tax = Spree::Taxon.where("name ILIKE ?", row.compact.first.to_s).map{|x| x if x.parent_id == parent.id or (x.parent.parent_id == parent.id if x.parent)}.compact.first
     if tax.nil?
-      tax = Spree::Taxon.new(:name=>row.compact.first.to_s)
+      tax = Spree::Taxon.new(:name=>row.compact.first.mb_chars.capitalize.to_s)
       tax.taxonomy = taxonomy
       tax.parent=parent
       tax.save
@@ -116,7 +122,7 @@ class Spree::Importers::BaseImporter
     csv_tmp_file = "#{Rails.root}/tmp/#{Time.now.strftime("%Y%m%d%H%M%S")}.csv"
     tmp_file = "#{Rails.root}/tmp/#{Time.now.strftime("%Y%m%d%H%M%S")}.xlsx"
     File.open(tmp_file, 'wb') do |f|
-      f.write  file.read
+      f.write file.read
     end
     unless system("python lib/xlsx2csv.py -i -d '\;' #{tmp_file} #{csv_tmp_file}")
       raise "Invalid XLSX format ERROR!"
