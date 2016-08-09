@@ -1,5 +1,5 @@
 <% content_for :sub_menu do %>
-  <ul id="sub_nav" class="nav nav-sidebar" data-hook="admin_product_sub_tabs">
+  <ul id="sub_nav" class="inline-menu" data-hook="admin_product_sub_tabs">
     <%= tab :new_import, url: new_import_admin_pricelists_path, match_path: "g" %>
     <%= tab :conflicts, url: admin_conflicts_path, match_path: "g" %>
     <%= tab :pricelists, url: admin_pricelists_path, match_path: "g" %>
