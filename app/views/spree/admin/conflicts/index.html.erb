@@ -1,7 +1,6 @@
 <% content_for :page_title do %>
   <%= "Конфликты Распознавания" %>
 <% end %>
-<%= render "spree/admin/pricelists/sub_menu" %>
 <div id="conflicts-counter">
   <%= "#{Spree::Conflict.count(:id)} #{Spree::Conflict.model_name.human(count: Spree::Conflict.count(:id))}" %>
 </div>

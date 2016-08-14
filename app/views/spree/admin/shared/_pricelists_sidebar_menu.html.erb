@@ -1,0 +1,5 @@
+<% if can? :manage, Spree::Pricelist %>
+  <ul class="nav nav-sidebar">
+    <%= main_menu_tree Spree.t(:new_import), :icon => 'file', sub_menu: "pricelist", url: "#sidebar-pricelist" %>
+  </ul>
+<% end %>
