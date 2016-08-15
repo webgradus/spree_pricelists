@@ -1,9 +1,6 @@
 <% content_for :page_title do %>
   <%= "Загрузка и распознавание XLSX файлов" %>
 <% end %>
-
-<%= render "sub_menu" %>
-
 <%= form_tag import_admin_pricelists_path, multipart: true do %>
   <fieldset class="no-border-top">
     <div class="row">
