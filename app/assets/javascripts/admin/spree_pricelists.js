@@ -1,5 +1,3 @@
-//= require admin/spree_backend
-
 $(document).on('click', 'a.resolve-conflict', function(){
     var conflict_id = $(this).data('id');
     $.ajax({
