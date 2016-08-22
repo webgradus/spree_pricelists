@@ -18,6 +18,8 @@ Spree::Product.class_eval do
     },
     ranked_by: "1.2 * :trigram + 0.5 * :tsearch"
 
+  self.whitelisted_ransackable_associations += %w[pricelist]
+
   def add_synonim(product_name=nil)
     self.product_synonims.find_or_create_by(:name => product_name || self.name)
   end
