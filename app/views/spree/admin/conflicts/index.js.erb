@@ -1,9 +1,8 @@
 $(document).ready(function(){
 	$('.get-more').remove()
-	$('#listing_products tbody').append('<%= j(render partial: 'spree/admin/conflicts/conflict', collection: @conflicts)%>')
+	$('#listing_conflicts tbody').append('<%= j(render partial: 'spree/admin/conflicts/conflict', collection: @conflicts)%>')
 	<% if params[:page].to_i < (Spree::Conflict.select(:id).count(:id) / 5) %>
-	$('#listing_products').after('<div class="get-more"><a href="/admin/conflicts?page=<%= params[:page]= params[:page].to_i + 1 %>" data-remote="true" rel="next">Показать еще конфликты</a></div>')
+	$('#listing_conflicts').after('<div class="get-more"><a href="/admin/conflicts?page=<%= params[:page]= params[:page].to_i + 1 %>" data-remote="true" rel="next">Показать еще конфликты</a></div>')
 	<% end %>
 	$('select.select2').select2()
 });
-

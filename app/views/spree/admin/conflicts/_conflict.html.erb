@@ -23,7 +23,7 @@
     </fieldset>
   </td>
   <td class="actions" data-hook="admin_products_index_row_actions">
-    <%= link_to_with_icon 'icon-ok', 'Решить конфликт', '#', {class: "edit resolve-conflict", no_text: true, :"data-id" => conflict.id } %>
+    <%= link_to_with_icon 'ok', 'Решить конфликт', '#', {class: "btn btn-sm btn-success edit resolve-conflict", no_text: true, :"data-id" => conflict.id } %>
     <%= link_to_delete conflict, url: admin_conflict_path(conflict), no_text: true %>
   </td>
 </tr>
