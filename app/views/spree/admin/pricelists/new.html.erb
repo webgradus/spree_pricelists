@@ -6,11 +6,11 @@
   <fieldset>
     <%= render 'form', f: f %>
     <div class="form-buttons filter-actions actions" data-hook="buttons">
-      <%= button Spree.t('actions.create'), 'icon-ok' %>
+      <%= button Spree.t('actions.create'), 'ok' %>
       <span class="or">
         <%= Spree.t(:or) %>
       </span>
-      <%= link_to_with_icon 'icon-remove', Spree.t('actions.cancel'), admin_pricelists_path, :class => 'button' %>
+      <%= link_to_with_icon 'remove', Spree.t('actions.cancel'), admin_pricelists_path, :class => 'button' %>
     </div>
   </fieldset>
 <% end %>
