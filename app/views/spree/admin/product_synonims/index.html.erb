@@ -1,12 +1,9 @@
 <% content_for :page_actions do %>
-  <li id="new_product_link">
-    <%= link_to_with_icon 'icon-plus', Spree.t(:new_product_synonim), new_admin_product_product_synonim_path(@product), { :remote => true, :class => "button", :id => 'admin_new_product_synonim' } %>
-  </li>
+    <%= link_to_with_icon 'plus', Spree.t(:new_product_synonim), new_admin_product_product_synonim_path(@product), { :remote => true, :class => "btn btn-success", :id => 'admin_new_product_synonim' } %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
 
-<%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Product Synonims'} %>
+<%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => :product_synonims} %>
 
 <div id="new_product_synonim_wrapper"></div>
 <% if @product_synonims.blank? %>
@@ -14,7 +11,7 @@
     <%= Spree.t(:not_found) %>
   </div>
 <% else %>
-  <table class="index" id="listing_products">
+  <table class="table" id="listing_products">
     <colgroup>
       <col style="width:90%"></col>
       <col style="width:10%"></col>
