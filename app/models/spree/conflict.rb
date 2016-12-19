@@ -24,8 +24,9 @@ class Spree::Conflict < ActiveRecord::Base
       product.update_attributes(new_product_attrs)
       product.update_stock_from_pricelist(new_product_attrs.merge('quantity' => self.quantity))
     else
-      product = Spree::Product.create!(name: self.product_name, sku: self.sku, price: self.price.to_f, cost_price: self.cost_price.to_f, pricelist_id: self.pricelist_id, shipping_category_id: Spree::ShippingCategory.first.id)
+      product = Spree::Product.create(name: self.product_name, sku: self.sku, price: self.price.to_f, cost_price: self.cost_price.to_f, pricelist_id: self.pricelist_id, shipping_category_id: Spree::ShippingCategory.first.id)
     end
-    self.destroy
+    self.destroy if product.persisted?
+    product
   end
 end

@@ -7,7 +7,7 @@ module Spree
 
       def update
         @conflict = Spree::Conflict.find params[:id]
-        @conflict.solve(params[:conflict])
+        @product = @conflict.solve(params[:conflict])
       end
     end
   end

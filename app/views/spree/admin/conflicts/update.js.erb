@@ -1,1 +1,5 @@
-$('tr#<%= dom_id(@conflict) %>').remove();
+<% if @product.errors.blank? %>
+  $('tr#<%= dom_id(@conflict) %>').fadeOut();
+<% else %>
+  $("div#content").prepend('<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><%= @product.errors.full_messages.join(', ') %></div>').alert();
+<% end %>

@@ -21,6 +21,11 @@ ru:
           pricelist: Распознаватель
         spree/product_synonim:
           name: Название
+        spree/conflict:
+          product_name: Название товара
+          sku: Артикул
+          price: Цена
+          provider_name: Прайс-лист/Распознаватель
   spree:
     product_synonims: Синонимы товара
     new_product_synonim: Новый синоним

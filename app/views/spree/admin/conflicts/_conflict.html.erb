@@ -1,8 +1,21 @@
 <tr id="<%= dom_id(conflict) %>">
   <td class="align-center" style="border-left: 1px solid #cee1f4;">
-    <span>
+    <p>
+      <strong><%= Spree::Conflict.human_attribute_name(:product_name) %></strong>:
       <%= conflict.product_name %>
-    </span>
+    </p>
+    <p>
+      <strong><%= Spree::Conflict.human_attribute_name(:sku) %></strong>:
+      <%= conflict.sku %>
+    </p>
+    <p>
+      <strong><%= Spree::Conflict.human_attribute_name(:price) %></strong>:
+      <%= conflict.price.to_s %>
+    </p>
+    <p>
+      <strong><%= Spree::Conflict.human_attribute_name(:provider_name) %></strong>:
+      <%= conflict.pricelist.name %>
+    </p>
     <p>
       <icon class="icon-resize-vertical"></icon>
     </p>
@@ -12,7 +25,7 @@
       </span>
     </fieldset>
   </td>
-  <td class="align-center">
+  <td class="align-center" style="vertical-align:bottom;">
     <fieldset class="no-border-bottom no-border-top">
       <div class="field">
         <%= label_tag "Действие" %>
@@ -22,7 +35,7 @@
       </div>
     </fieldset>
   </td>
-  <td class="actions" data-hook="admin_products_index_row_actions">
+  <td class="actions" data-hook="admin_products_index_row_actions" style="vertical-align:bottom;">
     <%= link_to_with_icon 'ok', 'Решить конфликт', '#', {class: "btn btn-sm btn-success edit resolve-conflict", no_text: true, :"data-id" => conflict.id } %>
     <%= link_to_delete conflict, url: admin_conflict_path(conflict), no_text: true %>
   </td>
