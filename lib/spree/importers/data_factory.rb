@@ -15,7 +15,7 @@ class Spree::Importers::DataFactory
 
     def solve
       raise ArgumentError.new("Option :name is required") unless attrs['name']
-      products = Spree::Product.find_by_synonim(attrs['name'])
+      products = Spree::Product.find_by_synonim(attrs['name'].gsub(/\n/, ''))
       if products.present?
         update_product(products.first)
       else
