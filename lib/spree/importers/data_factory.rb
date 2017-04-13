@@ -95,7 +95,11 @@ class Spree::Importers::DataFactory
       else
         product = Spree::Product.find(Spree::Variant.find_by_sku(@options['variant']).product_id)
 
-        variant = product.variants.where(sku: @attrs['sku']).first_or_create!(price: @attrs['price'])
+        if (variant = product.variants.where(sku: @attrs['sku']).first)
+            variant.update(price: @attrs['price'])
+        else
+            variant = product.variants.create!(sku: @attrs['sku'], price: @attrs['price'])
+        end          
 
         # if variant name is needed
         if Spree::Variant.column_names.include? "title"
