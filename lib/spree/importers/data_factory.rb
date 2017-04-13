@@ -46,14 +46,12 @@ class Spree::Importers::DataFactory
     end
 
     def create_product
-      log.info("Создан новый товар! Наименование: #{@attrs['name']} | Cебестоимость: #{@attrs['cost_price'].to_f.to_s} | Цена: #{@attrs['price'].to_f.to_s} | Артикул: #{@attrs['sku'].to_s}")
-
       if @options['variant'].present? && @options['variant'] != @attrs['sku']
         create_variants
 
       else
-
         product = Spree::Product.create!(@attrs.merge(pricelist_id: pricelist.id, shipping_category_id: Spree::ShippingCategory.first.id).except('quantity'))
+        log.info("Создан новый товар! Наименование: #{@attrs['name']} | Cебестоимость: #{@attrs['cost_price'].to_f.to_s} | Цена: #{@attrs['price'].to_f.to_s} | Артикул: #{@attrs['sku'].to_s}")
         product.taxons << taxon
         product.update_stock_from_pricelist(@attrs)
 
